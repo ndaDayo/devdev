@@ -42,6 +42,18 @@ func NewClient(endpoint string) *Client {
 	return c
 }
 
+func (c *Client) NewRequest(method, urlStr string) (*http.Request, error) {
+	req, err := http.NewRequest(method, urlStr, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Accept", mediaTypeV3)
+	req.Header.Set(headerAPIVersion, defaultAPIVersion)
+
+	return req, nil
+}
+
 type Response struct {
 	*http.Response
 }

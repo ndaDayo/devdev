@@ -45,8 +45,14 @@ type CommitsService service
 
 func (s *CommitsService) Get(ctx context.Context, owner, repo string) (*Commits, *Response, error) {
 	u := fmt.Sprintf("/repos/%v/%v/commits", owner, repo)
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest("GET", u)
 	if err != nil {
 		return nil, nil, err
 	}
+
+	resp, err := s.client.Do(ctx, req)
+	if err != nil {
+		return nil, resp, err
+	}
+
 }
