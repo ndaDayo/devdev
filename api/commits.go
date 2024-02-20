@@ -1,6 +1,8 @@
 package api
 
-import "time"
+import (
+	"time"
+)
 
 type Commits []commit
 
@@ -23,4 +25,16 @@ type author struct {
 type user struct {
 	Login string `json:"login"`
 	ID    int    `json:"id"`
+}
+
+type CommitsParams struct {
+	Owner string
+	Repo  string
+}
+
+func NewCommitsParams(owner, repo string) *CommitsParams {
+	return &CommitsParams{
+		Owner: owner,
+		Repo:  repo,
+	}
 }
