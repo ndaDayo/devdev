@@ -6,7 +6,11 @@ import (
 )
 
 const (
-	BASEURL = "https://api.github.com/"
+	baseUrl = "https://api.github.com/"
+
+	mediaTypeV3       = "application/vnd.github.v3+json"
+	headerAPIVersion  = "X-GitHub-Api-Version"
+	defaultAPIVersion = "2022-11-28"
 )
 
 type Client struct {
