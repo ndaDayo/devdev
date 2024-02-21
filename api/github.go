@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -57,10 +56,8 @@ func NewClient() *Client {
 	return c
 }
 
-func (c *Client) NewRequest(method, urlStr string) (*http.Request, error) {
-	fullUrl := c.endpoint + urlStr
-	fmt.Println(fullUrl)
-	req, err := http.NewRequest(method, fullUrl, nil)
+func (c *Client) NewRequest(method, path string) (*http.Request, error) {
+	req, err := http.NewRequest(method, c.endpoint+path, nil)
 	if err != nil {
 		return nil, err
 	}
