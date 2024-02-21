@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"os"
 	"time"
@@ -51,6 +52,7 @@ func (c *Client) NewRequest(method, urlStr string) (*http.Request, error) {
 
 	req.Header.Set("Accept", mediaTypeV3)
 	req.Header.Set(headerAPIVersion, defaultAPIVersion)
+	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	return req, nil
 }
@@ -65,6 +67,11 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	decErr := json.NewDecoder(resp.Body).Decode(v)
+	if decErr != nil {
+		err = decErr
+	}
 
 	return &Response{Response: resp}, nil
 }

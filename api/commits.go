@@ -50,7 +50,8 @@ func (s *CommitsService) Get(ctx context.Context, owner, repo string) (*Commits,
 		return nil, nil, err
 	}
 
-	resp, err := s.client.Do(ctx, req)
+	commits := new(Commits)
+	resp, err := s.client.Do(req)
 	if err != nil {
 		return nil, resp, err
 	}
