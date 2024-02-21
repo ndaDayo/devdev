@@ -22,7 +22,6 @@ const (
 
 type Client struct {
 	token      string
-	baseUrl    string
 	httpClient httpClient
 
 	Commits *CommitsService
@@ -38,28 +37,35 @@ type service struct {
 }
 
 func NewClient() *Client {
+	c := &Client{
+		token: token(),
+		httpClient: &http.Client{
+			Timeout: 60 * time.Second,
+		},
+	}
+
+	c.initialize()
+
+	return c
+}
+
+func (c *Client) initialize() {
+	c.Commits = &CommitsService{client: c}
+	c.Commit = &CommitService{client: c}
+}
+
+func token() string {
 	err := gotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	token := os.Getenv("GITHUB_TOKEN")
-
-	c := &Client{
-		token:   token,
-		baseUrl: baseUrl,
-		httpClient: &http.Client{
-			Timeout: 60 * time.Second,
-		},
-	}
-
-	c.Commit = &CommitService{client: c}
-
-	return c
+	return token
 }
 
 func (c *Client) NewRequest(method, path string) (*http.Request, error) {
-	endpoint, err := url.JoinPath(c.baseUrl, path)
+	endpoint, err := url.JoinPath(baseUrl, path)
 	if err != nil {
 		return nil, err
 	}
