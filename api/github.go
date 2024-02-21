@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -21,7 +22,7 @@ const (
 
 type Client struct {
 	token      string
-	endpoint   string
+	baseUrl    string
 	httpClient httpClient
 
 	Commits *CommitsService
@@ -45,8 +46,8 @@ func NewClient() *Client {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	c := &Client{
-		token:    token,
-		endpoint: baseUrl,
+		token:   token,
+		baseUrl: baseUrl,
 		httpClient: &http.Client{
 			Timeout: 60 * time.Second,
 		},
@@ -58,7 +59,12 @@ func NewClient() *Client {
 }
 
 func (c *Client) NewRequest(method, path string) (*http.Request, error) {
-	req, err := http.NewRequest(method, c.endpoint+path, nil)
+	endpoint, err := url.JoinPath(c.baseUrl, path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(method, endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
