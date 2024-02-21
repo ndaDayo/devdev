@@ -31,8 +31,13 @@ type user struct {
 
 type CommitsService service
 
-func (s *CommitsService) Get(ctx context.Context, owner, repo string) (*Commits, *Response, error) {
-	path := fmt.Sprintf("/repos/%v/%v/commits", owner, repo)
+type CommitsParam struct {
+	Owner string
+	Repo  string
+}
+
+func (s *CommitsService) Get(ctx context.Context, p CommitParam) (*Commits, *Response, error) {
+	path := fmt.Sprintf("/repos/%v/%v/commits", p.Owner, p.Repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, nil, err
