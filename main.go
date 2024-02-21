@@ -1,17 +1,27 @@
 package main
 
 import (
-	"log"
-	"os"
+	"context"
+	"fmt"
 
-	"github.com/subosito/gotenv"
+	"github.com/ndaDayo/devdev/api"
 )
 
 func main() {
-	err := gotenv.Load()
+	client := api.NewClient()
+	ctx := context.Background()
+
+	owner := "ndaDayo"
+	repo := "CompilerInGo"
+
+	commits, resp, err := client.Commits.Get(ctx, owner, repo)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("err", err)
 	}
 
-	token := os.Getenv("GITHUB_TOKEN")
+	fmt.Printf("resp: %+v\n", resp)
+
+	for _, commit := range *commits {
+		fmt.Printf("SHA: %s\n", commit.SHA)
+	}
 }

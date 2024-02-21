@@ -3,13 +3,17 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/subosito/gotenv"
 )
 
 const (
-	baseUrl = "https://api.github.com/"
+	baseUrl = "https://api.github.com"
 
 	mediaTypeV3       = "application/vnd.github.v3+json"
 	headerAPIVersion  = "X-GitHub-Api-Version"
@@ -32,20 +36,31 @@ type service struct {
 	client *Client
 }
 
-func NewClient(endpoint string) *Client {
+func NewClient() *Client {
+	err := gotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	token := os.Getenv("GITHUB_TOKEN")
+
 	c := &Client{
-		token:    os.Getenv("GITHUB_TOKEN"),
-		endpoint: endpoint,
+		token:    token,
+		endpoint: baseUrl,
 		httpClient: &http.Client{
 			Timeout: 60 * time.Second,
 		},
 	}
 
+	c.Commits = &CommitsService{client: c}
+
 	return c
 }
 
 func (c *Client) NewRequest(method, urlStr string) (*http.Request, error) {
-	req, err := http.NewRequest(method, urlStr, nil)
+	fullUrl := c.endpoint + urlStr
+	fmt.Println(fullUrl)
+	req, err := http.NewRequest(method, fullUrl, nil)
 	if err != nil {
 		return nil, err
 	}
