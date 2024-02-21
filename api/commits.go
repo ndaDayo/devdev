@@ -44,15 +44,17 @@ func NewCommitsParams(owner, repo string) *CommitsParams {
 type CommitsService service
 
 func (s *CommitsService) Get(ctx context.Context, owner, repo string) (*Commits, *Response, error) {
-	u := fmt.Sprintf("/repos/%v/%v/commits", owner, repo)
-	req, err := s.client.NewRequest("GET", u)
+	path := fmt.Sprintf("/repos/%v/%v/commits", owner, repo)
+	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	resp, err := s.client.Do(ctx, req)
+	commits := new(Commits)
+	resp, err := s.client.Do(ctx, req, commits)
 	if err != nil {
 		return nil, resp, err
 	}
 
+	return commits, resp, nil
 }

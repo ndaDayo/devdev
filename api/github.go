@@ -2,13 +2,17 @@ package api
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/subosito/gotenv"
 )
 
 const (
-	baseUrl = "https://api.github.com/"
+	baseUrl = "https://api.github.com"
 
 	mediaTypeV3       = "application/vnd.github.v3+json"
 	headerAPIVersion  = "X-GitHub-Api-Version"
@@ -31,26 +35,36 @@ type service struct {
 	client *Client
 }
 
-func NewClient(endpoint string) *Client {
+func NewClient() *Client {
+	err := gotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	token := os.Getenv("GITHUB_TOKEN")
+
 	c := &Client{
-		token:    os.Getenv("GITHUB_TOKEN"),
-		endpoint: endpoint,
+		token:    token,
+		endpoint: baseUrl,
 		httpClient: &http.Client{
 			Timeout: 60 * time.Second,
 		},
 	}
 
+	c.Commits = &CommitsService{client: c}
+
 	return c
 }
 
-func (c *Client) NewRequest(method, urlStr string) (*http.Request, error) {
-	req, err := http.NewRequest(method, urlStr, nil)
+func (c *Client) NewRequest(method, path string) (*http.Request, error) {
+	req, err := http.NewRequest(method, c.endpoint+path, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Accept", mediaTypeV3)
 	req.Header.Set(headerAPIVersion, defaultAPIVersion)
+	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	return req, nil
 }
@@ -65,6 +79,11 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	decErr := json.NewDecoder(resp.Body).Decode(v)
+	if decErr != nil {
+		err = decErr
+	}
 
 	return &Response{Response: resp}, nil
 }
