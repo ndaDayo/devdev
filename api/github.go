@@ -25,6 +25,7 @@ type Client struct {
 	httpClient httpClient
 
 	Commits *CommitsService
+	Commit  *CommitService
 }
 
 type httpClient interface {
@@ -51,7 +52,7 @@ func NewClient() *Client {
 		},
 	}
 
-	c.Commits = &CommitsService{client: c}
+	c.Commit = &CommitService{client: c}
 
 	return c
 }
