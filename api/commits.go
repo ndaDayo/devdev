@@ -29,18 +29,6 @@ type user struct {
 	ID    int    `json:"id"`
 }
 
-type CommitsParams struct {
-	Owner string
-	Repo  string
-}
-
-func NewCommitsParams(owner, repo string) *CommitsParams {
-	return &CommitsParams{
-		Owner: owner,
-		Repo:  repo,
-	}
-}
-
 type CommitsService service
 
 func (s *CommitsService) Get(ctx context.Context, owner, repo string) (*Commits, *Response, error) {
