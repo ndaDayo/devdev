@@ -36,12 +36,17 @@ type service struct {
 	client *Client
 }
 
-func NewClient() *Client {
+type ClientOption func(*Client)
+
+func NewClient(options ...ClientOption) *Client {
 	c := &Client{
-		token: token(),
 		httpClient: &http.Client{
 			Timeout: 60 * time.Second,
 		},
+	}
+
+	for _, option := range options {
+		option(c)
 	}
 
 	c.initialize()
@@ -62,6 +67,27 @@ func token() string {
 
 	token := os.Getenv("GITHUB_TOKEN")
 	return token
+}
+
+func WithNoToken() ClientOption {
+	return func(c *Client) {
+		c.token = ""
+	}
+}
+
+func WithToken() ClientOption {
+	return func(c *Client) {
+		err := gotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+
+		token := os.Getenv("GITHUB_TOKEN")
+		if token == "" {
+			log.Fatal("GITHUB_TOKEN is not set in the environment variables")
+		}
+		c.token = token
+	}
 }
 
 func (c *Client) NewRequest(method, path string) (*http.Request, error) {
