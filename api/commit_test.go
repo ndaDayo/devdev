@@ -1,26 +1,11 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"testing"
 )
-
-type MockHttpClient struct {
-	ResponseBody string
-}
-
-func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
-	response := &http.Response{
-		StatusCode: http.StatusOK,
-		Body:       ioutil.NopCloser(bytes.NewBufferString(m.ResponseBody)),
-		Header:     make(http.Header),
-	}
-	return response, nil
-}
 
 func TestCommitService_Get(t *testing.T) {
 	resdata, err := ioutil.ReadFile("testdata/commit.json")
