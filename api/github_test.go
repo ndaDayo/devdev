@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -16,7 +16,7 @@ type MockHttpClient struct {
 func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
 	response := &http.Response{
 		StatusCode: http.StatusOK,
-		Body:       ioutil.NopCloser(bytes.NewBufferString(m.ResponseBody)),
+		Body:       io.NopCloser(bytes.NewBufferString(m.ResponseBody)),
 		Header:     make(http.Header),
 	}
 	return response, nil

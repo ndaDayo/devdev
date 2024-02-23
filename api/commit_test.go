@@ -2,9 +2,13 @@ package api
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"testing"
 )
+
+type ExpectedCommit struct {
+	Commit GitCommit `json:"commit"`
+}
 
 func TestCommitService_Get(t *testing.T) {
 	res := loadTestData(t, "commit")
@@ -26,5 +30,12 @@ func TestCommitService_Get(t *testing.T) {
 		t.Fatalf("CommitService.Get returned an error: %v", err)
 	}
 
-	fmt.Println(commit.Commit.Message)
+	var expectedCommit ExpectedCommit
+	if err := json.Unmarshal(res, &expectedCommit); err != nil {
+		t.Fatalf("Failed to unmarshal expected commit: %v", err)
+	}
+
+	if commit.Commit.Message != expectedCommit.Commit.Message {
+		t.Errorf("Expected commit message to be '%s', but got '%s'", expectedCommit.Commit.Message, commit.Commit.Message)
+	}
 }
