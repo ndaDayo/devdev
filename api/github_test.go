@@ -2,8 +2,11 @@ package api
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"testing"
 )
 
 type MockHttpClient struct {
@@ -17,4 +20,17 @@ func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
 		Header:     make(http.Header),
 	}
 	return response, nil
+}
+
+func loadTestData(t *testing.T, resource string) []byte {
+	t.Helper()
+
+	path := fmt.Sprintf("testdata/%s.json", resource)
+	data, err := os.ReadFile(path)
+
+	if err != nil {
+		t.Fatalf("Failed to read test data file: %v", err)
+	}
+
+	return data
 }

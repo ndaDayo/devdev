@@ -3,18 +3,14 @@ package api
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"testing"
 )
 
 func TestCommitService_Get(t *testing.T) {
-	resdata, err := ioutil.ReadFile("testdata/commit.json")
-	if err != nil {
-		t.Fatalf("Failed to read test data file: %v", err)
-	}
+	res := loadTestData(t, "commit")
 
 	mockHttpClient := &MockHttpClient{
-		ResponseBody: string(resdata),
+		ResponseBody: string(res),
 	}
 	client := NewClient(WithNoToken())
 	client.httpClient = mockHttpClient
