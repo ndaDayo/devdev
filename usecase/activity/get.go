@@ -1,7 +1,26 @@
-package activity
+package activity_uc
 
-import "github.com/ndaDayo/devdev/entity"
+import (
+	"time"
 
-func Get() *entity.Activity {
+	"github.com/ndaDayo/devdev/entity"
+)
+
+type ActivityOptions struct {
+	period ActivityPeriod
+	source ActivitySource
+}
+
+type ActivityPeriod struct {
+	start time.Time
+	end   time.Time
+}
+
+type ActivitySource struct {
+	github bool
+	slack  bool
+}
+
+func Get(op ActivityOptions) *entity.Activity {
 	return &entity.Activity{}
 }
