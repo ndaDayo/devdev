@@ -8,6 +8,7 @@ import (
 
 type ActivityOptions struct {
 	period ActivityPeriod
+	source ActivitySource
 }
 
 type ActivityPeriod struct {
@@ -15,7 +16,11 @@ type ActivityPeriod struct {
 	End   time.Time
 }
 
-func Get(p ActivityPeriod) *entity.Activity {
+type ActivitySource struct {
+	github bool
+	slack  bool
+}
 
+func Get(p ActivityPeriod, s ActivitySource) *entity.Activity {
 	return &entity.Activity{}
 }
