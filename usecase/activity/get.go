@@ -12,8 +12,8 @@ type ActivityOptions struct {
 }
 
 type ActivityPeriod struct {
-	Start time.Time
-	End   time.Time
+	start time.Time
+	end   time.Time
 }
 
 type ActivitySource struct {
@@ -21,6 +21,6 @@ type ActivitySource struct {
 	slack  bool
 }
 
-func Get(p ActivityPeriod, s ActivitySource) *entity.Activity {
+func Get(op ActivityOptions) *entity.Activity {
 	return &entity.Activity{}
 }
