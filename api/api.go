@@ -2,52 +2,21 @@ package api
 
 import (
 	"context"
-	"encoding/json"
-	"net/http"
-	"time"
+	"fmt"
 )
 
-type httpClient interface {
-	Do(*http.Request) (*http.Response, error)
-}
+func (c *Client) Get(resource interface{}) (interface{}, error) {
+	client := NewClient(WithToken())
+	ctx := context.Background()
 
-type service struct {
-	client *Client
-}
-
-type ClientOption func(*Client)
-
-func NewClient(options ...ClientOption) *Client {
-	c := &Client{
-		httpClient: &http.Client{
-			Timeout: 60 * time.Second,
-		},
+	switch r := resource.(type) {
+	case CommitsParam:
+		commits, _, err := client.Commits.Get(ctx, r)
+		if err != nil {
+			fmt.Println("err", err)
+		}
+		return commits, nil
+	default:
+		return nil, nil
 	}
-
-	for _, option := range options {
-		option(c)
-	}
-
-	c.initialize()
-
-	return c
-}
-
-type Response struct {
-	*http.Response
-}
-
-func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	decErr := json.NewDecoder(resp.Body).Decode(v)
-	if decErr != nil {
-		err = decErr
-	}
-
-	return &Response{Response: resp}, nil
 }
