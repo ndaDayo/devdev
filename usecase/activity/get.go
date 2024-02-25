@@ -7,8 +7,7 @@ import (
 )
 
 type ActivityOptions struct {
-	period ActivityPeriod
-	source ActivitySource
+	ActivitySource
 }
 
 type ActivityPeriod struct {
@@ -17,8 +16,9 @@ type ActivityPeriod struct {
 }
 
 type ActivitySource struct {
-	github bool
-	slack  bool
+	Github       bool
+	Slack        bool
+	GithubParams *GithubParams
 }
 
 func Get(op ActivityOptions) *entity.Activity {

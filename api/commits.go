@@ -36,7 +36,7 @@ type CommitsParam struct {
 	Repo  string
 }
 
-func (s *CommitsService) Get(ctx context.Context, p CommitParam) (*Commits, *Response, error) {
+func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
 	path := fmt.Sprintf("/repos/%v/%v/commits", p.Owner, p.Repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
