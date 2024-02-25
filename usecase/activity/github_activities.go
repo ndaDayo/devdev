@@ -1,7 +1,6 @@
 package activity_uc
 
 import (
-	"context"
 	"errors"
 	"fmt"
 
@@ -20,20 +19,22 @@ func (g GithubFetcher) FetchActivity(params interface{}) (*entity.Activity, erro
 		return nil, errors.New("invalid parameters for GitHub fetcher")
 	}
 
-	client := api.NewClient(api.WithToken())
-	ctx := context.Background()
-
 	prm := api.CommitsParam{
 		Owner: gp.Username,
 		Repo:  gp.Repo,
 	}
 
-	commits, _, err := client.Commits.Get(ctx, prm)
+	commits, err := api.GetResource(prm)
 	if err != nil {
 		fmt.Println("err", err)
 	}
 
-	for _, c := range *commits {
+	cm, ok := commits.(*api.Commits)
+	if !ok {
+		return nil, errors.New("")
+	}
+
+	for _, c := range *cm {
 		fmt.Println(c.Commit.Message)
 	}
 

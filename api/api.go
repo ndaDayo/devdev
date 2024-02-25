@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (c *Client) Get(resource interface{}) (interface{}, error) {
+func GetResource(resource interface{}) (interface{}, error) {
 	client := NewClient(WithToken())
 	ctx := context.Background()
 
