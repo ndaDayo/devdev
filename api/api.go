@@ -16,6 +16,13 @@ func GetResource(resource interface{}) (interface{}, error) {
 			fmt.Println("err", err)
 		}
 		return commits, nil
+	case CommitParam:
+		commit, _, err := client.Commit.Get(ctx, r)
+		if err != nil {
+			fmt.Println("err", err)
+		}
+		return commit, nil
+
 	default:
 		return nil, nil
 	}
