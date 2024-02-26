@@ -34,9 +34,32 @@ func (g GithubFetcher) FetchActivity(params interface{}) (*entity.Activity, erro
 		return nil, errors.New("")
 	}
 
+	totalLen := 0
 	for _, c := range *cm {
-		fmt.Println(c.Commit.Message)
+		prm := api.CommitParam{
+			Owner: gp.Username,
+			Repo:  gp.Repo,
+			Ref:   c.SHA,
+		}
+
+		commit, err := api.GetResource(prm)
+		if err != nil {
+			fmt.Println("err", err)
+		}
+
+		cm, ok := commit.(*api.Commit)
+		if !ok {
+			return nil, errors.New("")
+		}
+
+		totalLen += cm.Stats.Total
 	}
 
-	return &entity.Activity{}, nil
+	activity := &entity.Activity{
+		Github: entity.Github{
+			TotalLen: totalLen,
+		},
+	}
+
+	return activity, nil
 }

@@ -1,7 +1,5 @@
 package entity
 
 type Github struct {
-	Commits []Commit
+	TotalLen int
 }
-
-type Commit struct{}

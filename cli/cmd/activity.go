@@ -4,6 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/spf13/cobra"
 )
@@ -23,13 +25,19 @@ var activityCmd = &cobra.Command{
 			}))
 		}
 
-		ac := activity_uc.Get(opts)
+		a, err := activity_uc.Get(opts...)
+		if err != nil {
+			fmt.Printf("Error fetching activity: %v\n", err)
+			return
+		}
+
+		fmt.Printf("Total GitHub activity changes: %d\n", a.Github.TotalLen)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(activityCmd)
 
-	activityCmd.Flags().StringVarP(&githubUsername, "github-username", "gu", "", "GitHub username")
-	activityCmd.Flags().StringVarP(&githubRepo, "github-repo", "gr", "", "GitHub repository name")
+	activityCmd.Flags().StringVarP(&githubUsername, "github-username", "u", "", "GitHub username")
+	activityCmd.Flags().StringVarP(&githubRepo, "github-repo", "r", "", "GitHub repository name")
 }
