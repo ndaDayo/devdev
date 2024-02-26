@@ -23,6 +23,7 @@ var activityCmd = &cobra.Command{
 			}))
 		}
 
+		ac := activity_uc.Get(opts)
 	},
 }
 

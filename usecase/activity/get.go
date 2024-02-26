@@ -1,6 +1,7 @@
 package activity_uc
 
 import (
+	"fmt"
 	"time"
 
 	entity "github.com/ndaDayo/devdev/entity/activity"
@@ -38,10 +39,7 @@ func WithSlack(prm *SlackParams) func(*ActivityOptions) {
 }
 
 func NewActivityOptions(opts ...func(*ActivityOptions)) *ActivityOptions {
-	options := &ActivityOptions{
-		Source: activitySource{},
-		Period: activityPeriod{},
-	}
+	options := &ActivityOptions{}
 
 	for _, opt := range opts {
 		opt(options)
@@ -49,6 +47,17 @@ func NewActivityOptions(opts ...func(*ActivityOptions)) *ActivityOptions {
 	return options
 }
 
-func Get() *entity.Activity {
-	return &entity.Activity{}
+func Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
+	options := NewActivityOptions(opts...)
+	if options.Source.githubParams != nil {
+		gf := GithubFetcher{}
+		activity, err := gf.FetchActivity(options.Source.githubParams)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch GitHub activity: %w", err)
+		}
+
+		return activity, nil
+	}
+	return nil, nil
 }
