@@ -59,16 +59,6 @@ func (c *Client) initialize() {
 	c.Commit = &CommitService{client: c}
 }
 
-func token() string {
-	err := gotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	token := os.Getenv("GITHUB_TOKEN")
-	return token
-}
-
 func WithNoToken() ClientOption {
 	return func(c *Client) {
 		c.token = ""
@@ -77,9 +67,9 @@ func WithNoToken() ClientOption {
 
 func WithToken() ClientOption {
 	return func(c *Client) {
-		err := gotenv.Load()
+		err := gotenv.Load("../.env")
 		if err != nil {
-			log.Fatal("Error loading .env file")
+			log.Fatal("Error  loading .env file")
 		}
 
 		token := os.Getenv("GITHUB_TOKEN")

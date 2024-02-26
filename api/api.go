@@ -22,7 +22,6 @@ func GetResource(resource interface{}) (interface{}, error) {
 			fmt.Println("err", err)
 		}
 		return commit, nil
-
 	default:
 		return nil, nil
 	}
