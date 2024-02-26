@@ -16,22 +16,22 @@ type activityPeriod struct {
 type activitySource struct {
 	Github       bool
 	Slack        bool
-	githubParams *githubParams
-	slackParams  *slackParams
+	githubParams *GithubParams
+	slackParams  *SlackParams
 }
 
-type slackParams struct {
+type SlackParams struct {
 	Username string
 }
 
-func WithGithub(prm *githubParams) activityOptions {
+func WithGithub(prm *GithubParams) activityOptions {
 	return func(as *activitySource) {
 		as.Github = true
 		as.githubParams = prm
 	}
 }
 
-func WithSlack(prm *slackParams) activityOptions {
+func WithSlack(prm *SlackParams) activityOptions {
 	return func(as *activitySource) {
 		as.Slack = true
 		as.slackParams = prm
