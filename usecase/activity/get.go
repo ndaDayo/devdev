@@ -6,7 +6,10 @@ import (
 	entity "github.com/ndaDayo/devdev/entity/activity"
 )
 
-type activityOptions func(*activitySource)
+type activityOptions struct {
+	Source activitySource
+	Period activityPeriod
+}
 
 type activityPeriod struct {
 	start time.Time
@@ -14,8 +17,6 @@ type activityPeriod struct {
 }
 
 type activitySource struct {
-	Github       bool
-	Slack        bool
 	githubParams *GithubParams
 	slackParams  *SlackParams
 }
@@ -24,28 +25,23 @@ type SlackParams struct {
 	Username string
 }
 
-func WithGithub(prm *GithubParams) activityOptions {
-	return func(as *activitySource) {
-		as.Github = true
-		as.githubParams = prm
+func WithGithub(prm *GithubParams) func(*activityOptions) {
+	return func(opts *activityOptions) {
+		opts.Source.githubParams = prm
 	}
 }
 
-func WithSlack(prm *SlackParams) activityOptions {
-	return func(as *activitySource) {
-		as.Slack = true
-		as.slackParams = prm
+func WithSlack(prm *SlackParams) func(*activityOptions) {
+	return func(opts *activityOptions) {
+		opts.Source.slackParams = prm
 	}
 }
 
-func NewActivityOptions(opts ...activityOptions) *activitySource {
-	as := &activitySource{}
-
-	for _, op := range opts {
-		op(as)
+func NewActivityOptions() *activityOptions {
+	return &activityOptions{
+		Source: activitySource{},
+		Period: activityPeriod{},
 	}
-
-	return as
 }
 
 func Get(op activityOptions) *entity.Activity {

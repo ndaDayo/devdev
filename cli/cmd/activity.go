@@ -6,28 +6,35 @@ package cmd
 import (
 	"fmt"
 
+	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/spf13/cobra"
 )
+
+var githubUsername, githubRepo string
 
 // activityCmd represents the activity command
 var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("activity called")
+		opts := make([]activity_uc.ActivityOptions, 0)
+		if githubUsername != "" && githubRepo != "" {
+			opts = append(opts, activity_uc.WithGithub(&activity_uc.GithubParams{
+				Username: githubUsername,
+				Repo:     githubRepo,
+			}))
+		}
+
+		as := activity_uc.NewActivityOptions(opts...)
+		ac := activity_uc.Get(as)
+
+		fmt.Println("activity", ac)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(activityCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// activityCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// activityCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	activityCmd.Flags().StringVarP(&githubUsername, "github-username", "gu", "", "GitHub username")
+	activityCmd.Flags().StringVarP(&githubRepo, "github-repo", "gr", "", "GitHub repository name")
 }
