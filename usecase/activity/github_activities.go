@@ -8,13 +8,13 @@ import (
 	entity "github.com/ndaDayo/devdev/entity/activity"
 )
 
-type githubParams struct {
+type GithubParams struct {
 	Username string
 	Repo     string
 }
 
 func (g GithubFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
-	gp, ok := params.(*githubParams)
+	gp, ok := params.(*GithubParams)
 	if !ok {
 		return nil, errors.New("invalid parameters for GitHub fetcher")
 	}
