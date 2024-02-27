@@ -20,8 +20,10 @@ func (g GithubFetcher) FetchActivity(params interface{}) (*entity.Activity, erro
 	}
 
 	prm := api.CommitsParam{
-		Owner: gp.Username,
-		Repo:  gp.Repo,
+		Path: api.Path{
+			Owner: gp.Username,
+			Repo:  gp.Repo,
+		},
 	}
 
 	commits, err := api.GetResource(prm)

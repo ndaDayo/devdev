@@ -33,16 +33,16 @@ type user struct {
 type CommitsService service
 
 type CommitsParam struct {
-	path  path
-	query *query
+	Path  Path
+	Query *Query
 }
 
-type path struct {
+type Path struct {
 	Owner string
 	Repo  string
 }
 
-type query struct {
+type Query struct {
 	Sha       string
 	Path      string
 	Author    string
@@ -54,11 +54,11 @@ type query struct {
 }
 
 func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
-	path := fmt.Sprintf("/repos/%v/%v/commits", p.path.Owner, p.path.Repo)
+	path := fmt.Sprintf("/repos/%v/%v/commits", p.Path.Owner, p.Path.Repo)
 	query := url.Values{}
 
-	query.Add("since", p.query.Since)
-	query.Add("until", p.query.Until)
+	query.Add("since", p.Query.Since)
+	query.Add("until", p.Query.Until)
 
 	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
 	req, err := s.client.NewRequest("GET", endpoint)
