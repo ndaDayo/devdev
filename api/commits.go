@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"time"
 )
 
@@ -54,7 +55,13 @@ type query struct {
 
 func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
 	path := fmt.Sprintf("/repos/%v/%v/commits", p.path.Owner, p.path.Repo)
-	req, err := s.client.NewRequest("GET", path)
+	query := url.Values{}
+
+	query.Add("since", p.query.Since)
+	query.Add("until", p.query.Until)
+
+	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
+	req, err := s.client.NewRequest("GET", endpoint)
 	if err != nil {
 		return nil, nil, err
 	}
