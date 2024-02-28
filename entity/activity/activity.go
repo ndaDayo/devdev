@@ -1,5 +1,13 @@
 package entity
 
 type Activity struct {
-	Github Github
+	GithubActivity GithubActivity
+}
+
+func NewActivity(g GithubActivity) *Activity {
+	a := &Activity{
+		GithubActivity: g,
+	}
+
+	return a
 }
