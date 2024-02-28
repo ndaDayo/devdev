@@ -1,12 +1,12 @@
 package entity
 
 type Activity struct {
-	GithubActivity GithubActivity
+	CodeActivity Code
 }
 
-func NewActivity(g GithubActivity) *Activity {
+func NewActivity(c Code) *Activity {
 	a := &Activity{
-		GithubActivity: g,
+		CodeActivity: c,
 	}
 
 	return a
