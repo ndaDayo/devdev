@@ -11,6 +11,7 @@ import (
 type GithubParams struct {
 	Username string
 	Repo     string
+	query    api.Query
 }
 
 func (g GithubFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
@@ -20,8 +21,14 @@ func (g GithubFetcher) FetchActivity(params interface{}) (*entity.Activity, erro
 	}
 
 	prm := api.CommitsParam{
-		Owner: gp.Username,
-		Repo:  gp.Repo,
+		Path: api.Path{
+			Owner: gp.Username,
+			Repo:  gp.Repo,
+		},
+		Query: api.Query{
+			Since: "",
+			Until: "",
+		},
 	}
 
 	commits, err := api.GetResource(prm)
