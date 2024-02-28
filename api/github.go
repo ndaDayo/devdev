@@ -82,11 +82,12 @@ func WithToken() ClientOption {
 
 func (c *Client) NewRequest(method, path string) (*http.Request, error) {
 	endpoint, err := url.JoinPath(baseUrl, path)
+	end, err := url.QueryUnescape(endpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, endpoint, nil)
+	req, err := http.NewRequest(method, end, nil)
 	if err != nil {
 		return nil, err
 	}
