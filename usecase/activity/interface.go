@@ -8,4 +8,4 @@ type ActivityFetcher interface {
 
 type Params interface{}
 
-type GithubFetcher struct{}
+type CodeActivityFetcher struct{}
