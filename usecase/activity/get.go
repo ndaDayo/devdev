@@ -18,17 +18,17 @@ type activityPeriod struct {
 }
 
 type activitySource struct {
-	githubParams *GithubParams
-	slackParams  *SlackParams
+	codeParams  *CodeParams
+	slackParams *SlackParams
 }
 
 type SlackParams struct {
 	Username string
 }
 
-func WithGithub(prm *GithubParams) func(*ActivityOptions) {
+func WithGithub(prm *CodeParams) func(*ActivityOptions) {
 	return func(opts *ActivityOptions) {
-		opts.Source.githubParams = prm
+		opts.Source.codeParams = prm
 	}
 }
 
@@ -49,9 +49,9 @@ func NewActivityOptions(opts ...func(*ActivityOptions)) *ActivityOptions {
 
 func Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
 	options := NewActivityOptions(opts...)
-	if options.Source.githubParams != nil {
-		gf := GithubFetcher{}
-		activity, err := gf.FetchActivity(options.Source.githubParams)
+	if options.Source.codeParams != nil {
+		gf := CodeActivityFetcher{}
+		activity, err := gf.FetchActivity(options.Source.codeParams)
 
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch GitHub activity: %w", err)
