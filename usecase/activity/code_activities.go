@@ -37,6 +37,11 @@ func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity
 	}
 
 	for _, c := range *cm {
+		_, err := ca.getCommit(c.SHA)
+		if err != nil {
+			return nil, errors.New("")
+		}
+
 	}
 
 	activity := entity.NewActivity()
