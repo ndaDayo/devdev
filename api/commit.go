@@ -91,7 +91,7 @@ type Verification struct {
 	Payload   *string `json:"payload"`
 }
 
-type CommitService service
+type CommitService Service
 
 type CommitParam struct {
 	Owner string
