@@ -2,7 +2,7 @@ package pullrequests
 
 import "time"
 
-type PullRequest struct {
+type PullRequests struct {
 	URL                string           `json:"url"`
 	ID                 int              `json:"id"`
 	NodeID             string           `json:"node_id"`

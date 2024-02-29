@@ -30,7 +30,7 @@ type user struct {
 	ID    int    `json:"id"`
 }
 
-type CommitsService service
+type CommitsService Service
 
 type CommitsParam struct {
 	Path  Path

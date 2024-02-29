@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/ndaDayo/devdev/api/github/pulls/pullrequests"
 	"github.com/subosito/gotenv"
 )
 
@@ -24,15 +25,16 @@ type Client struct {
 	token      string
 	httpClient httpClient
 
-	Commits *CommitsService
-	Commit  *CommitService
+	Commits      *CommitsService
+	Commit       *CommitService
+	PullRequests *pullrequests.PullRequests
 }
 
 type httpClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-type service struct {
+type Service struct {
 	client *Client
 }
 
