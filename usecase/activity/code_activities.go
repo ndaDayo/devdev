@@ -2,7 +2,6 @@ package activity_uc
 
 import (
 	"errors"
-	"fmt"
 
 	entity "github.com/ndaDayo/devdev/entity/activity"
 )
@@ -19,21 +18,22 @@ func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity
 		return nil, errors.New("invalid params type")
 	}
 
-	cm, err := ca.getCommits()
+	p := PullRequestsParams{
+		Owner:    cp.Owner,
+		Repo:     cp.Repo,
+		Username: cp.Username,
+	}
+
+	pr, err := c.PullRequestsFetcher.FetchPullRequests(p)
 	if err != nil {
-		fmt.Println("Error fetching commits:", err)
 		return nil, err
 	}
 
-	for _, c := range *cm {
-		_, err := ca.getCommit(c.SHA)
-		if err != nil {
-			return nil, errors.New("")
-		}
-
+	ac := &entity.Activity{
+		CodeActivity: entity.Code{
+			PullReq: *pr,
+		},
 	}
 
-	activity := entity.NewActivity()
-
-	return activity, nil
+	return ac, nil
 }

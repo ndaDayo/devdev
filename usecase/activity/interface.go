@@ -1,7 +1,6 @@
 package activity_uc
 
 import (
-	"context"
 	"time"
 
 	entity "github.com/ndaDayo/devdev/entity/activity"
@@ -13,7 +12,9 @@ type ActivityFetcher interface {
 
 type Params interface{}
 
-type CodeActivityFetcher struct{}
+type CodeActivityFetcher struct {
+	PullRequestsFetcher PullRequestsFetcher
+}
 
 type CodeFetcher interface {
 	GetCodeActivity(c CodeParams) (*CodeActivity, error)
@@ -26,7 +27,7 @@ type PullRequestsParams struct {
 }
 
 type PullRequestsFetcher interface {
-	FetchPullRequests(ctx context.Context, params PullRequestsParams) (*entity.PullReq, error)
+	FetchPullRequests(params PullRequestsParams) (*entity.PullReq, error)
 }
 
 type CodeActivity struct {

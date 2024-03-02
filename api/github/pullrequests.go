@@ -10,13 +10,15 @@ import (
 
 type PullRequestsService service
 
-func (s *PullRequestsService) FetchPullRequests(ctx context.Context, p activity_uc.PullRequestsParams) (*entity.PullReq, *Response, error) {
+func (s *PullRequestsService) FetchPullRequests(p activity_uc.PullRequestsParams) (*entity.PullReq, *Response, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
 
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, nil, err
 	}
+
+	ctx := context.Background()
 
 	pr := new(entity.PullReq)
 	resp, err := s.client.Do(ctx, req, pr)
