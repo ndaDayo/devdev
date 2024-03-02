@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ndaDayo/devdev/api"
+	api "github.com/ndaDayo/devdev/api/github"
 )
 
 type PullRequestsParam struct {
