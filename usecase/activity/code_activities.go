@@ -14,22 +14,12 @@ type CodeParams struct {
 	query    api.Query
 }
 
-type CodeActivity struct {
-	Owner string
-	Repo  string
-}
-
-func NewCodeActivity(owner, repo string) *CodeActivity {
-	return &CodeActivity{Owner: owner, Repo: repo}
-}
-
 func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
 	cp, ok := params.(CodeParams)
 	if !ok {
 		return nil, errors.New("invalid params type")
 	}
 
-	ca := NewCodeActivity(cp.Username, cp.Repo)
 	cm, err := ca.getCommits()
 	if err != nil {
 		fmt.Println("Error fetching commits:", err)
