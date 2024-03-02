@@ -1,8 +1,7 @@
-package api
+package github
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
@@ -27,17 +26,27 @@ type Client struct {
 	PullRequests *PullRequestsService
 }
 
-type PullRequestsService Service
-
-type httpClient interface {
-	Do(*http.Request) (*http.Response, error)
-}
-
-type Service struct {
+type service struct {
 	client *Client
 }
 
 type ClientOption func(*Client)
+
+func GetResource(resource interface{}) (interface{}, error) {
+	client := NewClient(WithToken())
+	ctx := context.Background()
+
+	switch r := resource.(type) {
+	case PullRequestsParam:
+		pr, _, err := client.PullRequests.Get(ctx, r)
+		if err != nil {
+			return nil, err
+		}
+		return pr, nil
+	default:
+		return nil, nil
+	}
+}
 
 func NewClient(options ...ClientOption) *Client {
 	c := &Client{
@@ -56,8 +65,7 @@ func NewClient(options ...ClientOption) *Client {
 }
 
 func (c *Client) initialize() {
-	c.Commits = &CommitsService{client: c}
-	c.Commit = &CommitService{client: c}
+	c.PullRequests = &PullRequestsService{client: c}
 }
 
 func WithNoToken() ClientOption {
@@ -98,23 +106,4 @@ func (c *Client) NewRequest(method, path string) (*http.Request, error) {
 	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	return req, nil
-}
-
-type Response struct {
-	*http.Response
-}
-
-func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	decErr := json.NewDecoder(resp.Body).Decode(v)
-	if decErr != nil {
-		err = decErr
-	}
-
-	return &Response{Response: resp}, nil
 }
