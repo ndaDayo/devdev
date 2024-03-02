@@ -1,26 +1,13 @@
-package pullrequests
+package github
 
 import (
 	"context"
 	"fmt"
-
-	"github.com/ndaDayo/devdev/api"
 )
 
-type PullRequestsParam struct {
-	Path  Path
-	Query Query
-}
+type PullRequestsService service
 
-type Path struct {
-	Owner string
-	Repo  string
-}
-
-type Query struct {
-}
-
-func (s *api.PullRequestsService) Get(ctx context.Context, p PullRequestsParam) (*PullRequests, *api.Response, error) {
+func (s *PullRequestsService) Get(ctx context.Context, p PullRequestsParam) (*PullRequests, *Response, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Path.Owner, p.Path.Repo)
 
 	req, err := s.client.NewRequest("GET", path)

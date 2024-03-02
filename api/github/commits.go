@@ -1,4 +1,4 @@
-package api
+package github
 
 import (
 	"context"
@@ -6,6 +6,29 @@ import (
 	"net/url"
 	"time"
 )
+
+type CommitsService service
+
+type CommitsParam struct {
+	path  Path
+	query Query
+}
+
+type path struct {
+	Owner string
+	Repo  string
+}
+
+type query struct {
+	Sha       string
+	Path      string
+	Author    string
+	Committer string
+	Since     string
+	Until     string
+	PerPage   int
+	Page      int
+}
 
 type Commits []commit
 
@@ -30,31 +53,8 @@ type user struct {
 	ID    int    `json:"id"`
 }
 
-type CommitsService Service
-
-type CommitsParam struct {
-	Path  Path
-	Query Query
-}
-
-type Path struct {
-	Owner string
-	Repo  string
-}
-
-type Query struct {
-	Sha       string
-	Path      string
-	Author    string
-	Committer string
-	Since     string
-	Until     string
-	PerPage   int
-	Page      int
-}
-
 func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
-	path := fmt.Sprintf("/repos/%v/%v/commits", p.Path.Owner, p.Path.Repo)
+	path := fmt.Sprintf("/repos/%v/%v/commits", p.path.Owner, p.path.Repo)
 	query := url.Values{}
 
 	query.Add("since", "2023-08-31T00:00:00Z")

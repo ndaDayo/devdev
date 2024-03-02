@@ -1,4 +1,4 @@
-package api
+package github
 
 import (
 	"context"
@@ -91,7 +91,7 @@ type Verification struct {
 	Payload   *string `json:"payload"`
 }
 
-type CommitService Service
+type CommitService service
 
 type CommitParam struct {
 	Owner string
