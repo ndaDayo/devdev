@@ -24,8 +24,6 @@ type Client struct {
 	token      string
 	httpClient httpClient
 
-	Commits      *CommitsService
-	Commit       *CommitService
 	PullRequests *PullRequestsService
 }
 
