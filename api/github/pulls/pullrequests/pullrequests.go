@@ -7,8 +7,6 @@ import (
 	"github.com/ndaDayo/devdev/api"
 )
 
-type PullRequestsService api.Service
-
 type PullRequestsParam struct {
 	Path  Path
 	Query Query
@@ -22,7 +20,7 @@ type Path struct {
 type Query struct {
 }
 
-func (s *PullRequestsService) Get(ctx context.Context, p PullRequestsParam) (*PullRequests, *api.Response, error) {
+func (s *api.PullRequestsService) Get(ctx context.Context, p PullRequestsParam) (*PullRequests, *api.Response, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Path.Owner, p.Path.Repo)
 
 	req, err := s.client.NewRequest("GET", path)

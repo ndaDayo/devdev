@@ -9,7 +9,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/ndaDayo/devdev/api/github/pulls/pullrequests"
 	"github.com/subosito/gotenv"
 )
 
@@ -27,8 +26,10 @@ type Client struct {
 
 	Commits      *CommitsService
 	Commit       *CommitService
-	PullRequests *pullrequests.PullRequests
+	PullRequests *PullRequestsService
 }
+
+type PullRequestsService Service
 
 type httpClient interface {
 	Do(*http.Request) (*http.Response, error)
