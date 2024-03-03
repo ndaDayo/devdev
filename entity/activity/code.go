@@ -2,11 +2,8 @@ package entity
 
 import "time"
 
-type Code struct {
-	PullReq PullReq
-}
+type Code struct{}
 
-type PullReq struct {
-	Count       int
-	TimeToMerge time.Duration
+type PullRequest struct {
+	CreatedAt time.Time
 }
