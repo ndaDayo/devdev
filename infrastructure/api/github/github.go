@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/subosito/gotenv"
 )
 
@@ -37,8 +38,8 @@ func GetResource(resource interface{}) (interface{}, error) {
 	ctx := context.Background()
 
 	switch r := resource.(type) {
-	case PullRequestsParam:
-		pr, _, err := client.PullRequests.Get(ctx, r)
+	case activity_uc.PullRequestsParams:
+		pr, err := client.PullRequests.Get(ctx, r)
 		if err != nil {
 			return nil, err
 		}

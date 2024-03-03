@@ -12,6 +12,12 @@ type CodeParams struct {
 	Username string
 }
 
+func NewCodeActivityFetcher(fetcher PullRequestsFetcher) *CodeActivityFetcher {
+	return &CodeActivityFetcher{
+		PullRequestsFetcher: fetcher,
+	}
+}
+
 func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
 	cp, ok := params.(*CodeParams)
 	if !ok {

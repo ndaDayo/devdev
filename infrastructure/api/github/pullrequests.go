@@ -20,19 +20,23 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) FetchPullRequests(p activity_uc.PullRequestsParams) ([]entity.PullRequest, *Response, error) {
+func (s *PullRequestsService) Get(ctx context.Context, p activity_uc.PullRequestsParams) ([]entity.PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
 
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	ctx := context.Background()
 
 	prs := new(PullRequests)
 	resp, err := s.client.Do(ctx, req, prs)
 	if err != nil {
-		return nil, resp, err
+		return nil, err
+	}
+
+	// TODO delete
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	var ets []entity.PullRequest
@@ -43,5 +47,5 @@ func (s *PullRequestsService) FetchPullRequests(p activity_uc.PullRequestsParams
 		ets = append(ets, e)
 	}
 
-	return ets, resp, nil
+	return ets, nil
 }

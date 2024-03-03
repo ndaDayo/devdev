@@ -27,7 +27,7 @@ type PullRequestsParams struct {
 }
 
 type PullRequestsFetcher interface {
-	FetchPullRequests(params PullRequestsParams) ([]entity.PullRequest, error)
+	Get(params PullRequestsParams) ([]entity.PullRequest, error)
 }
 
 type CodeActivity struct {
