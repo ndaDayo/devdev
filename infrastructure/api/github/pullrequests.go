@@ -20,13 +20,14 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(ctx context.Context, p activity_uc.PullRequestsParams) ([]entity.PullRequest, error) {
+func (s *PullRequestsService) Get(p activity_uc.PullRequestsParams) ([]entity.PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
 
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, err
 	}
+	ctx := context.Background()
 
 	prs := new(PullRequests)
 	resp, err := s.client.Do(ctx, req, prs)

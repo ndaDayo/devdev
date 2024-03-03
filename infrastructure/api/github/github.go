@@ -1,7 +1,6 @@
 package github
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"net/url"
@@ -35,11 +34,10 @@ type ClientOption func(*Client)
 
 func GetResource(resource interface{}) (interface{}, error) {
 	client := NewClient(WithToken())
-	ctx := context.Background()
 
 	switch r := resource.(type) {
 	case activity_uc.PullRequestsParams:
-		pr, err := client.PullRequests.Get(ctx, r)
+		pr, err := client.PullRequests.Get(r)
 		if err != nil {
 			return nil, err
 		}
