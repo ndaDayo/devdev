@@ -19,19 +19,21 @@ var activityCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var opts []func(*activity_uc.ActivityOptions)
 		if githubUsername != "" && githubRepo != "" {
-			opts = append(opts, activity_uc.WithGithub(&activity_uc.GithubParams{
+			opts = append(opts, activity_uc.WithGithub(&activity_uc.CodeParams{
 				Username: githubUsername,
 				Repo:     githubRepo,
 			}))
 		}
 
-		a, err := activity_uc.Get(opts...)
+		acs, err := activity_uc.Get(opts...)
 		if err != nil {
 			fmt.Printf("Error fetching activity: %v\n", err)
 			return
 		}
 
-		fmt.Printf("Total GitHub activity changes: %d\n", a.Github.TotalLen)
+		for _, ac := range acs.CodeActivity.PullRequests {
+			fmt.Println("CreatedAt:", ac.CreatedAt)
+		}
 	},
 }
 

@@ -13,7 +13,7 @@ type CodeParams struct {
 }
 
 func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
-	cp, ok := params.(CodeParams)
+	cp, ok := params.(*CodeParams)
 	if !ok {
 		return nil, errors.New("invalid params type")
 	}
