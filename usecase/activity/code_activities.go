@@ -31,7 +31,7 @@ func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity
 
 	ac := &entity.Activity{
 		CodeActivity: entity.Code{
-			PullReq: *pr,
+			PullRequests: pr,
 		},
 	}
 
