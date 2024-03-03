@@ -12,10 +12,22 @@ type ActivityFetcher interface {
 
 type Params interface{}
 
-type CodeActivityFetcher struct{}
+type CodeActivityFetcher struct {
+	PullRequestsFetcher PullRequestsFetcher
+}
 
 type CodeFetcher interface {
-	GetCodeActivity(owner, repo string) (*CodeActivity, error)
+	GetCodeActivity(c CodeParams) (*CodeActivity, error)
+}
+
+type PullRequestsParams struct {
+	Owner    string
+	Repo     string
+	Username string
+}
+
+type PullRequestsFetcher interface {
+	FetchPullRequests(params PullRequestsParams) ([]entity.PullRequest, error)
 }
 
 type CodeActivity struct {
