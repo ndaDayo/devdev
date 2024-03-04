@@ -12,7 +12,7 @@ type CodeParams struct {
 	Username string
 }
 
-func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
+func (c *CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
 	cp, ok := params.(*CodeParams)
 	if !ok {
 		return nil, errors.New("invalid params type")
@@ -24,7 +24,7 @@ func (c CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity
 		Username: cp.Username,
 	}
 
-	pr, err := c.PullRequestsFetcher.Get(p)
+	pr, err := c.ResourceFetcher.GetResource(p)
 	if err != nil {
 		return nil, err
 	}
