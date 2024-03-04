@@ -12,10 +12,6 @@ type ActivityFetcher interface {
 
 type Params interface{}
 
-type CodeActivityFetcher struct {
-	PullRequestsFetcher PullRequestsFetcher
-}
-
 type CodeFetcher interface {
 	GetCodeActivity(c CodeParams) (*CodeActivity, error)
 }
@@ -26,8 +22,8 @@ type PullRequestsParams struct {
 	Username string
 }
 
-type PullRequestsFetcher interface {
-	Get(params PullRequestsParams) ([]entity.PullRequest, error)
+type ResourceGetter interface {
+	GetResource(resource interface{}) (interface{}, error)
 }
 
 type CodeActivity struct {

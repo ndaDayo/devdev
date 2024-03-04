@@ -22,7 +22,6 @@ type PullRequestsService service
 
 func (s *PullRequestsService) Get(p activity_uc.PullRequestsParams) ([]entity.PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
-
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, err
