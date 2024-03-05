@@ -1,13 +1,13 @@
 package github
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
 
+	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/subosito/gotenv"
 )
 
@@ -32,13 +32,18 @@ type service struct {
 
 type ClientOption func(*Client)
 
-func GetResource(resource interface{}) (interface{}, error) {
+type GitHubResourceFetcher struct{}
+
+func NewGitHubResourceFetcher() *GitHubResourceFetcher {
+	return &GitHubResourceFetcher{}
+}
+
+func (f *GitHubResourceFetcher) GetResource(resource interface{}) (interface{}, error) {
 	client := NewClient(WithToken())
-	ctx := context.Background()
 
 	switch r := resource.(type) {
-	case PullRequestsParam:
-		pr, _, err := client.PullRequests.Get(ctx, r)
+	case activity_uc.PullRequestsParams:
+		pr, err := client.PullRequests.Get(r)
 		if err != nil {
 			return nil, err
 		}
