@@ -10,18 +10,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var githubUsername, githubRepo string
+var owner, repo, user string
 
 // activityCmd represents the activity command
 var activityCmd = &cobra.Command{
 	Use:   "activity",
-	Short: "A brief description of your command",
+	Short: "get activity",
 	Run: func(cmd *cobra.Command, args []string) {
 		var opts []func(*activity_uc.ActivityOptions)
-		if githubUsername != "" && githubRepo != "" {
+		if owner != "" && repo != "" {
 			opts = append(opts, activity_uc.WithGithub(&activity_uc.CodeParams{
-				Username: githubUsername,
-				Repo:     githubRepo,
+				Owner: owner,
+				Repo:  repo,
 			}))
 		}
 
@@ -40,6 +40,6 @@ var activityCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(activityCmd)
 
-	activityCmd.Flags().StringVarP(&githubUsername, "github-username", "u", "", "GitHub username")
-	activityCmd.Flags().StringVarP(&githubRepo, "github-repo", "r", "", "GitHub repository name")
+	activityCmd.Flags().StringVarP(&owner, "repo-owner", "u", "", "GitHub repository owner")
+	activityCmd.Flags().StringVarP(&repo, "repo", "r", "", "GitHub repository name")
 }
