@@ -1,6 +1,7 @@
 package get
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -32,6 +33,14 @@ func WithGithub(prm *CodeParams) func(*ActivityOptions) {
 	}
 }
 
+type Params interface{}
+
+type PullRequestsParams struct {
+	Owner    string
+	Repo     string
+	Username string
+}
+
 func WithSlack(prm *SlackParams) func(*ActivityOptions) {
 	return func(opts *ActivityOptions) {
 		opts.Source.slackParams = prm
@@ -60,4 +69,36 @@ func Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
 		return activity, nil
 	}
 	return nil, nil
+}
+
+type CodeParams struct {
+	Owner    string
+	Repo     string
+	Username string
+}
+
+func (c *CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
+	cp, ok := params.(*CodeParams)
+	if !ok {
+		return nil, errors.New("invalid params type")
+	}
+
+	p := PullRequestsParams{
+		Owner:    cp.Owner,
+		Repo:     cp.Repo,
+		Username: cp.Username,
+	}
+
+	pr, err := c.ResourceFetcher.GetResource(p)
+	if err != nil {
+		return nil, err
+	}
+
+	ac := &entity.Activity{
+		CodeActivity: entity.Code{
+			PullRequests: pr,
+		},
+	}
+
+	return ac, nil
 }

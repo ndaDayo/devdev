@@ -4,14 +4,6 @@ import (
 	"time"
 )
 
-type Params interface{}
-
-type PullRequestsParams struct {
-	Owner    string
-	Repo     string
-	Username string
-}
-
 type CodeActivityFetcher struct {
 	ResourceFetcher ResourceFetcher
 }
