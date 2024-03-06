@@ -1,4 +1,4 @@
-package activity_uc
+package get
 
 import (
 	"time"
