@@ -20,8 +20,8 @@ var activityCmd = &cobra.Command{
 		var opts []func(*usecase.Input)
 		if githubUsername != "" && githubRepo != "" {
 			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{
-				Username: githubUsername,
-				Repo:     githubRepo,
+				Owner: githubUsername,
+				Repo:  githubRepo,
 			}))
 		}
 
