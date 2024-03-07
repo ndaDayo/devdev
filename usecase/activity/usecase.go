@@ -41,6 +41,12 @@ type PullRequestsParams struct {
 	Username string
 }
 
+type CodeParams struct {
+	Owner    string
+	Repo     string
+	Username string
+}
+
 func WithSlack(prm *SlackParams) func(*ActivityOptions) {
 	return func(opts *ActivityOptions) {
 		opts.Source.slackParams = prm
@@ -69,12 +75,6 @@ func Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
 		return activity, nil
 	}
 	return nil, nil
-}
-
-type CodeParams struct {
-	Owner    string
-	Repo     string
-	Username string
 }
 
 func (c *CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
