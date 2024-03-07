@@ -6,26 +6,27 @@ package cmd
 import (
 	"fmt"
 
-	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
+	"github.com/ndaDayo/devdev/di"
+	usecase "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/spf13/cobra"
 )
 
 var githubUsername, githubRepo string
 
-// activityCmd represents the activity command
 var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		var opts []func(*activity_uc.ActivityOptions)
+		var opts []func(*usecase.Input)
 		if githubUsername != "" && githubRepo != "" {
-			opts = append(opts, activity_uc.WithGithub(&activity_uc.CodeParams{
+			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{
 				Username: githubUsername,
 				Repo:     githubRepo,
 			}))
 		}
 
-		acs, err := activity_uc.Get(opts...)
+		u := di.InitializeActivityUseCase()
+		acs, err := u.Run(opts...)
 		if err != nil {
 			fmt.Printf("Error fetching activity: %v\n", err)
 			return
