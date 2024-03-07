@@ -16,7 +16,7 @@ func NewActivityUseCase(repo repository.Activity) *ActivityUseCase {
 	return &ActivityUseCase{repository: repo}
 }
 
-func (u *ActivityUseCase) Get(opts ...func(*Input)) (*entity.Activity, error) {
+func (u *ActivityUseCase) Run(opts ...func(*Input)) (*entity.Activity, error) {
 	options := NewActivityOptionsInput(opts...)
 	if options.Source.code != nil {
 		activity, err := u.FetchActivity(options.Source.code)

@@ -17,16 +17,16 @@ var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		var opts []func(*usecase.ActivityOptions)
+		var opts []func(*usecase.Input)
 		if githubUsername != "" && githubRepo != "" {
-			opts = append(opts, usecase.WithGithub(&usecase.CodeParams{
+			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{
 				Username: githubUsername,
 				Repo:     githubRepo,
 			}))
 		}
 
 		u := di.InitializeActivityUseCase()
-		acs, err := u.Get(opts...)
+		acs, err := u.Run(opts...)
 		if err != nil {
 			fmt.Printf("Error fetching activity: %v\n", err)
 			return

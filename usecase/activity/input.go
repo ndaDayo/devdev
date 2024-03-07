@@ -13,8 +13,8 @@ type activityPeriod struct {
 }
 
 type activitySource struct {
-	code  *CodeInput
-	slack *SlackInput
+	Code  *CodeInput
+	Slack *slackInput
 }
 
 type Params interface{}
@@ -27,17 +27,17 @@ type CodeInput struct {
 
 func WithGithub(prm *CodeInput) func(*Input) {
 	return func(opts *Input) {
-		opts.Source.code = prm
+		opts.Source.Code = prm
 	}
 }
 
-type SlackInput struct {
+type slackInput struct {
 	Username string
 }
 
-func WithSlack(prm *SlackInput) func(*Input) {
+func WithSlack(prm *slackInput) func(*Input) {
 	return func(opts *Input) {
-		opts.Source.slack = prm
+		opts.Source.Slack = prm
 	}
 }
 
