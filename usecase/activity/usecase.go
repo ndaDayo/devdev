@@ -1,11 +1,12 @@
-package get
+package usecase
 
 import (
 	"errors"
 	"fmt"
 	"time"
 
-	entity "github.com/ndaDayo/devdev/entity/activity"
+	entity "github.com/ndaDayo/devdev/domain/entity/activity"
+	repository "github.com/ndaDayo/devdev/domain/repository/activity"
 )
 
 type ActivityOptions struct {
@@ -62,11 +63,18 @@ func NewActivityOptions(opts ...func(*ActivityOptions)) *ActivityOptions {
 	return options
 }
 
-func Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
+type ActivityUseCase struct {
+	repository repository.Activity
+}
+
+func NewActivityUseCase(repo repository.Activity) *ActivityUseCase {
+	return &ActivityUseCase{repository: repo}
+}
+
+func (u *ActivityUseCase) Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
 	options := NewActivityOptions(opts...)
 	if options.Source.codeParams != nil {
-		gf := CodeActivityFetcher{}
-		activity, err := gf.FetchActivity(options.Source.codeParams)
+		activity, err := u.FetchActivity(options.Source.codeParams)
 
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch GitHub activity: %w", err)
@@ -77,27 +85,19 @@ func Get(opts ...func(*ActivityOptions)) (*entity.Activity, error) {
 	return nil, nil
 }
 
-func (c *CodeActivityFetcher) FetchActivity(params interface{}) (*entity.Activity, error) {
+func (u *ActivityUseCase) FetchActivity(params interface{}) (*entity.Activity, error) {
 	cp, ok := params.(*CodeParams)
 	if !ok {
 		return nil, errors.New("invalid params type")
 	}
 
-	p := PullRequestsParams{
-		Owner:    cp.Owner,
-		Repo:     cp.Repo,
-		Username: cp.Username,
-	}
-
-	pr, err := c.ResourceFetcher.GetResource(p)
+	code, err := u.repository.GetCodeActivity(cp.Owner, cp.Repo, cp.Username)
 	if err != nil {
 		return nil, err
 	}
 
 	ac := &entity.Activity{
-		CodeActivity: entity.Code{
-			PullRequests: pr,
-		},
+		CodeActivity: code,
 	}
 
 	return ac, nil
