@@ -7,13 +7,20 @@
 package di
 
 import (
-	"github.com/ndaDayo/devdev/infrastructure/api/github"
+	"github.com/google/wire"
+	"github.com/ndaDayo/devdev/api/github"
+	"github.com/ndaDayo/devdev/domain/repository/activity"
 	"github.com/ndaDayo/devdev/usecase/activity"
 )
 
 // Injectors from wire.go:
 
-func InitializeResourceFetcher() activity_uc.ResourceFetcher {
-	gitHubResourceFetcher := github.NewGitHubResourceFetcher()
-	return gitHubResourceFetcher
+func InitializeActivityUseCase() *usecase.ActivityUseCase {
+	codeActivityFetcher := github.NewCodeActivityFetcher()
+	activityUseCase := usecase.NewActivityUseCase(codeActivityFetcher)
+	return activityUseCase
 }
+
+// wire.go:
+
+var activitySet = wire.NewSet(github.NewCodeActivityFetcher, wire.Bind(new(repository.Activity), new(*github.CodeActivityFetcher)), usecase.NewActivityUseCase)

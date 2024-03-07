@@ -32,13 +32,7 @@ type service struct {
 
 type ClientOption func(*Client)
 
-type GitHubResourceFetcher struct{}
-
-func NewGitHubResourceFetcher() *GitHubResourceFetcher {
-	return &GitHubResourceFetcher{}
-}
-
-func (f *GitHubResourceFetcher) GetResource(resource interface{}) (interface{}, error) {
+func GetResource(resource interface{}) (interface{}, error) {
 	client := NewClient(WithToken())
 
 	switch r := resource.(type) {
