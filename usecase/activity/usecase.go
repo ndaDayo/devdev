@@ -18,8 +18,8 @@ func NewActivityUseCase(repo repository.Activity) *ActivityUseCase {
 
 func (u *ActivityUseCase) Run(opts ...func(*Input)) (*entity.Activity, error) {
 	options := NewActivityOptionsInput(opts...)
-	if options.Source.code != nil {
-		activity, err := u.FetchActivity(options.Source.code)
+	if options.Source.Code != nil {
+		activity, err := u.FetchActivity(options.Source.Code)
 
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch GitHub activity: %w", err)
