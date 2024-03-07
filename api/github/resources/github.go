@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/subosito/gotenv"
 )
 
@@ -31,21 +30,6 @@ type service struct {
 }
 
 type ClientOption func(*Client)
-
-func GetResource(resource interface{}) (interface{}, error) {
-	client := NewClient(WithToken())
-
-	switch r := resource.(type) {
-	case activity_uc.PullRequestsParams:
-		pr, err := client.PullRequests.Get(r)
-		if err != nil {
-			return nil, err
-		}
-		return pr, nil
-	default:
-		return nil, nil
-	}
-}
 
 func NewClient(options ...ClientOption) *Client {
 	c := &Client{
@@ -75,7 +59,7 @@ func WithNoToken() ClientOption {
 
 func WithToken() ClientOption {
 	return func(c *Client) {
-		err := gotenv.Load("../.env")
+		err := gotenv.Load("../../.env")
 		if err != nil {
 			log.Fatal("Error  loading .env file")
 		}
