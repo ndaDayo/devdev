@@ -32,9 +32,7 @@ var activityCmd = &cobra.Command{
 			return
 		}
 
-		for _, ac := range acs.CodeActivity.PullRequests {
-			fmt.Println("CreatedAt:", ac.CreatedAt)
-		}
+		fmt.Println("type %T", acs)
 	},
 }
 

@@ -10,16 +10,16 @@ import (
 type CommitsService service
 
 type CommitsParam struct {
-	path  Path
-	query Query
+	Path  Path
+	Query Query
 }
 
-type path struct {
+type Path struct {
 	Owner string
 	Repo  string
 }
 
-type query struct {
+type Query struct {
 	Sha       string
 	Path      string
 	Author    string
@@ -54,7 +54,7 @@ type user struct {
 }
 
 func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
-	path := fmt.Sprintf("/repos/%v/%v/commits", p.path.Owner, p.path.Repo)
+	path := fmt.Sprintf("/repos/%v/%v/commits", p.Path.Owner, p.Path.Repo)
 	query := url.Values{}
 
 	query.Add("since", "2023-08-31T00:00:00Z")
