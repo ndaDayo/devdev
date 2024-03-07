@@ -23,8 +23,4 @@ func InitializeActivityUseCase() *usecase.ActivityUseCase {
 
 // wire.go:
 
-func ProvideActivity(repo *github.CodeActivityFetcher) repository.Activity {
-	return repo
-}
-
 var activitySet = wire.NewSet(github.NewCodeActivityFetcher, wire.Bind(new(repository.Activity), new(*github.CodeActivityFetcher)), usecase.NewActivityUseCase)
