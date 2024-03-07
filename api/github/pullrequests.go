@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	entity "github.com/ndaDayo/devdev/entity/activity"
-	activity_uc "github.com/ndaDayo/devdev/usecase/activity"
+	entity "github.com/ndaDayo/devdev/domain/entity/activity"
 )
 
 type PullRequests []PullRequest
@@ -20,7 +19,7 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(p activity_uc.PullRequestsParams) ([]entity.PullRequest, error) {
+func (s *PullRequestsService) Get() ([]entity.PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
