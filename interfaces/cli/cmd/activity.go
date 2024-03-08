@@ -15,7 +15,7 @@ var githubUsername, githubRepo string
 
 var activityCmd = &cobra.Command{
 	Use:   "activity",
-	Short: "A brief description of your command",
+	Short: "get activity",
 	Run: func(cmd *cobra.Command, args []string) {
 		var opts []func(*usecase.Input)
 		if githubUsername != "" && githubRepo != "" {
@@ -28,10 +28,10 @@ var activityCmd = &cobra.Command{
 		u := di.InitializeActivityUseCase()
 		acs, err := u.Run(opts...)
 		if err != nil {
-			fmt.Printf("Error fetching activity: %v\n", err)
+			fmt.Printf("Error activity cmd: %v\n", err)
 			return
 		}
-
+		// TODO delete because for debug
 		fmt.Println("type %T", acs)
 	},
 }

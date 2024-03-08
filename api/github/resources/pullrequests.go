@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	entity "github.com/ndaDayo/devdev/domain/entity/activity"
@@ -30,11 +31,10 @@ func (s *PullRequestsService) Get(owner, repo string) ([]entity.PullRequest, err
 	prs := new(PullRequests)
 	resp, err := s.client.Do(ctx, req, prs)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch pullrequests: %w", err)
 	}
 
-	// TODO delete
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
