@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	entity "github.com/ndaDayo/devdev/domain/entity/activity"
 )
 
 type PullRequests []PullRequest
@@ -20,7 +18,7 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(owner, repo string) ([]entity.PullRequest, error) {
+func (s *PullRequestsService) Get(owner, repo string) ([]PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", owner, repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
@@ -38,13 +36,10 @@ func (s *PullRequestsService) Get(owner, repo string) ([]entity.PullRequest, err
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	var entities []entity.PullRequest
+	var p []PullRequest
 	for _, pr := range *prs {
-		lt := entity.NewLeadTime(pr.CreatedAt, pr.MergedAt)
-		e := entity.NewPullRequest(lt)
-
-		entities = append(entities, e)
+		p = append(p, pr)
 	}
 
-	return entities, nil
+	return p, nil
 }
