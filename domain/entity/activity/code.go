@@ -8,4 +8,9 @@ type Code struct {
 
 type PullRequest struct {
 	CreatedAt time.Time
+	MergedAt  time.Time
+}
+
+func (pr *PullRequest) LeadTime() time.Duration {
+	return pr.MergedAt.Sub(pr.CreatedAt)
 }
