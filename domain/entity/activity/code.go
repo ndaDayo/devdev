@@ -7,10 +7,9 @@ type Code struct {
 }
 
 type PullRequest struct {
-	CreatedAt time.Time
-	MergedAt  time.Time
+	LeadTime time.Duration
 }
 
-func (pr *PullRequest) LeadTime() time.Duration {
-	return pr.MergedAt.Sub(pr.CreatedAt)
+func GetLeadTime(createdAt, mergedAt time.Time) time.Duration {
+	return mergedAt.Sub(createdAt)
 }
