@@ -38,13 +38,13 @@ func (s *PullRequestsService) Get(owner, repo string) ([]entity.PullRequest, err
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	var ets []entity.PullRequest
+	var entities []entity.PullRequest
 	for _, pr := range *prs {
-		e := entity.PullRequest{
-			CreatedAt: pr.CreatedAt,
-		}
-		ets = append(ets, e)
+		lt := entity.NewLeadTime(pr.CreatedAt, pr.MergedAt)
+		e := entity.NewPullRequest(lt)
+
+		entities = append(entities, e)
 	}
 
-	return ets, nil
+	return entities, nil
 }
