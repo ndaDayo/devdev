@@ -19,7 +19,7 @@ func NewActivityUseCase(repo repository.Activity) *ActivityUseCase {
 func (u *ActivityUseCase) Run(opts ...func(*Input)) (*entity.Activity, error) {
 	options := NewActivityOptionsInput(opts...)
 	if options.Source.Code != nil {
-		code, err := u.FetchCodeActivity(options.Source.Code)
+		code, err := u.fetchCodeActivity(options.Source.Code)
 
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch GitHub activity: %w", err)
@@ -34,7 +34,7 @@ func (u *ActivityUseCase) Run(opts ...func(*Input)) (*entity.Activity, error) {
 	return nil, nil
 }
 
-func (u *ActivityUseCase) FetchCodeActivity(params interface{}) (entity.Code, error) {
+func (u *ActivityUseCase) fetchCodeActivity(params interface{}) (entity.Code, error) {
 	cp, ok := params.(*CodeInput)
 	if !ok {
 		return entity.Code{}, errors.New("invalid params type")
