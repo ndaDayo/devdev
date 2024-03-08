@@ -20,7 +20,7 @@ type PullRequest struct {
 type PullRequestsService service
 
 func (s *PullRequestsService) Get(owner, repo string) ([]entity.PullRequest, error) {
-	path := fmt.Sprintf("/repos/%v/%v/pulls", owner, repo)
+	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", owner, repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, err
