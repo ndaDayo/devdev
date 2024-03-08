@@ -40,10 +40,9 @@ func (s *PullRequestsService) Get(owner, repo string) ([]entity.PullRequest, err
 
 	var entities []entity.PullRequest
 	for _, pr := range *prs {
-		lt := entity.GetLeadTime(pr.CreatedAt, pr.MergedAt)
-		e := entity.PullRequest{
-			LeadTime: lt,
-		}
+		lt := entity.NewLeadTime(pr.CreatedAt, pr.MergedAt)
+		e := entity.NewPullRequest(lt)
+
 		entities = append(entities, e)
 	}
 

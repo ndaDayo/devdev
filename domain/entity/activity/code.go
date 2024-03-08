@@ -7,9 +7,18 @@ type Code struct {
 }
 
 type PullRequest struct {
-	LeadTime time.Duration
+	leadTime LeadTime
 }
 
-func GetLeadTime(createdAt, mergedAt time.Time) time.Duration {
-	return mergedAt.Sub(createdAt)
+func NewPullRequest(l LeadTime) PullRequest {
+	return PullRequest{leadTime: l}
+}
+
+type LeadTime struct {
+	time time.Duration
+}
+
+func NewLeadTime(createdAt, mergedAt time.Time) LeadTime {
+	t := mergedAt.Sub(createdAt)
+	return LeadTime{time: t}
 }
