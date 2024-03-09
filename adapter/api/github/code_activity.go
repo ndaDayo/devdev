@@ -1,7 +1,7 @@
 package github
 
 import (
-	github "github.com/ndaDayo/devdev/api/github/resources"
+	github "github.com/ndaDayo/devdev/adapter/api/github/resources"
 	entity "github.com/ndaDayo/devdev/domain/entity/activity"
 )
 
