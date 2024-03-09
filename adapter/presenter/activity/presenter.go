@@ -5,12 +5,12 @@ import (
 	usecase "github.com/ndaDayo/devdev/usecase/activity"
 )
 
-type ActivityPresenter struct{}
+type activityPresenter struct{}
 
 func NewActivityPresenter() usecase.ActivityPresenter {
-	return ActivityPresenter{}
+	return activityPresenter{}
 }
 
-func (p ActivityPresenter) Output(entity.Activity) usecase.ActivityOutput {
+func (p activityPresenter) Output(entity.Activity) usecase.ActivityOutput {
 	return usecase.ActivityOutput{}
 }
