@@ -8,7 +8,8 @@ package di
 
 import (
 	"github.com/google/wire"
-	"github.com/ndaDayo/devdev/api/github"
+	"github.com/ndaDayo/devdev/adapter/api/github"
+	"github.com/ndaDayo/devdev/adapter/presenter/activity"
 	"github.com/ndaDayo/devdev/domain/repository/activity"
 	"github.com/ndaDayo/devdev/usecase/activity"
 )
@@ -17,10 +18,11 @@ import (
 
 func InitializeActivityUseCase() *usecase.ActivityUseCase {
 	codeActivityFetcher := github.NewCodeActivityFetcher()
-	activityUseCase := usecase.NewActivityUseCase(codeActivityFetcher)
+	activityPresenter := presenter.NewActivityPresenter()
+	activityUseCase := usecase.NewActivityUseCase(codeActivityFetcher, activityPresenter)
 	return activityUseCase
 }
 
 // wire.go:
 
-var activitySet = wire.NewSet(github.NewCodeActivityFetcher, wire.Bind(new(repository.Activity), new(*github.CodeActivityFetcher)), usecase.NewActivityUseCase)
+var activitySet = wire.NewSet(github.NewCodeActivityFetcher, wire.Bind(new(repository.Activity), new(*github.CodeActivityFetcher)), presenter.NewActivityPresenter, usecase.NewActivityUseCase)

@@ -1,16 +1,16 @@
-package activity
+package presenter
 
 import (
 	entity "github.com/ndaDayo/devdev/domain/entity/activity"
 	usecase "github.com/ndaDayo/devdev/usecase/activity"
 )
 
-type activityPresenter struct{}
+type ActivityPresenter struct{}
 
 func NewActivityPresenter() usecase.ActivityPresenter {
-	return activityPresenter{}
+	return ActivityPresenter{}
 }
 
-func (p activityPresenter) Output(entity.Activity) usecase.ActivityOutput {
+func (p ActivityPresenter) Output(entity.Activity) usecase.ActivityOutput {
 	return usecase.ActivityOutput{}
 }
