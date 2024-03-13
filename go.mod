@@ -3,6 +3,7 @@ module github.com/ndaDayo/devdev
 go 1.21
 
 require (
+	github.com/golang/mock v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/spf13/cobra v1.8.0
 	github.com/subosito/gotenv v1.6.0
