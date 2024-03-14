@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -60,7 +61,9 @@ func (u *ActivityUseCase) fetchCodeActivity(params interface{}) (entity.Code, er
 		return entity.Code{}, errors.New("invalid params type")
 	}
 
-	code, err := u.repository.GetCodeActivity(cp.Owner, cp.Repo, cp.Username)
+	ctx := context.Background()
+	code, err := u.repository.GetCodeActivity(ctx, cp.Owner, cp.Repo, cp.Username)
+
 	if err != nil {
 		return entity.Code{}, err
 	}

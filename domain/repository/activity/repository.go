@@ -1,7 +1,11 @@
 package repository
 
-import entity "github.com/ndaDayo/devdev/domain/entity/activity"
+import (
+	"context"
+
+	entity "github.com/ndaDayo/devdev/domain/entity/activity"
+)
 
 type Activity interface {
-	GetCodeActivity(owner, repo, user string) (entity.Code, error)
+	GetCodeActivity(ctx context.Context, owner, repo, user string) (entity.Code, error)
 }

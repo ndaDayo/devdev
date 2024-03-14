@@ -18,13 +18,12 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(owner, repo string) ([]PullRequest, error) {
+func (s *PullRequestsService) Get(ctx context.Context, owner, repo string) ([]PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", owner, repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
 		return nil, err
 	}
-	ctx := context.Background()
 
 	prs := new(PullRequests)
 	resp, err := s.client.Do(ctx, req, prs)
