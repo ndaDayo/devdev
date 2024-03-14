@@ -15,7 +15,7 @@ func NewCodeActivityFetcher() *CodeActivityFetcher {
 
 func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, owner, repo, user string) (entity.Code, error) {
 	client := github.NewClient(github.WithToken())
-	pr, err := pullRequest(client, owner, repo)
+	pr, err := pullRequest(ctx, client, owner, repo)
 	if err != nil {
 		return entity.Code{}, err
 	}

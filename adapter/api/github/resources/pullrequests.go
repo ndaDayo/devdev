@@ -22,7 +22,7 @@ func (s *PullRequestsService) Get(ctx context.Context, owner, repo string) ([]Pu
 	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", owner, repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to construct NewRequest: %w", err)
 	}
 
 	prs := new(PullRequests)
