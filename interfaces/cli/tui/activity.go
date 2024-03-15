@@ -41,17 +41,16 @@ func InitialModel() model {
 
 		switch i {
 		case 0:
-			t.Placeholder = "Nickname"
+			t.Placeholder = "Owner"
 			t.Focus()
 			t.PromptStyle = focusedStyle
 			t.TextStyle = focusedStyle
 		case 1:
-			t.Placeholder = "Email"
+			t.Placeholder = "RepositoryName"
 			t.CharLimit = 64
 		case 2:
-			t.Placeholder = "Password"
+			t.Placeholder = "Username"
 			t.EchoMode = textinput.EchoPassword
-			t.EchoCharacter = '•'
 		}
 
 		m.inputs[i] = t
