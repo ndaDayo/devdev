@@ -5,8 +5,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/ndaDayo/devdev/di"
+	activity "github.com/ndaDayo/devdev/interfaces/cli/tui"
 	usecase "github.com/ndaDayo/devdev/usecase/activity"
 	"github.com/spf13/cobra"
 )
@@ -17,6 +20,11 @@ var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: "get activity",
 	Run: func(cmd *cobra.Command, args []string) {
+		if _, err := tea.NewProgram(activity.InitialModel()).Run(); err != nil {
+			fmt.Printf("could not start program: %s\n", err)
+			os.Exit(1)
+		}
+
 		var opts []func(*usecase.Input)
 		if githubUsername != "" && githubRepo != "" {
 			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{
