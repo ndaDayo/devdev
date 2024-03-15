@@ -1,6 +1,8 @@
 package github
 
 import (
+	"context"
+
 	github "github.com/ndaDayo/devdev/adapter/api/github/resources"
 	entity "github.com/ndaDayo/devdev/domain/entity/activity"
 )
@@ -11,9 +13,9 @@ func NewCodeActivityFetcher() *CodeActivityFetcher {
 	return &CodeActivityFetcher{}
 }
 
-func (c *CodeActivityFetcher) GetCodeActivity(owner, repo, user string) (entity.Code, error) {
+func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, owner, repo, user string) (entity.Code, error) {
 	client := github.NewClient(github.WithToken())
-	pr, err := pullRequest(client, owner, repo)
+	pr, err := pullRequest(ctx, client, owner, repo)
 	if err != nil {
 		return entity.Code{}, err
 	}
@@ -25,8 +27,8 @@ func (c *CodeActivityFetcher) GetCodeActivity(owner, repo, user string) (entity.
 	return code, nil
 }
 
-func pullRequest(c *github.Client, owner, repo string) ([]entity.PullRequest, error) {
-	prs, err := c.PullRequests.Get(owner, repo)
+func pullRequest(ctx context.Context, c *github.Client, owner, repo string) ([]entity.PullRequest, error) {
+	prs, err := c.PullRequests.Get(ctx, owner, repo)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -18,13 +19,12 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(owner, repo string) ([]PullRequest, error) {
+func (s *PullRequestsService) Get(ctx context.Context, owner, repo string) ([]PullRequest, error) {
 	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", owner, repo)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to construct NewRequest: %w", err)
 	}
-	ctx := context.Background()
 
 	prs := new(PullRequests)
 	resp, err := s.client.Do(ctx, req, prs)
@@ -32,7 +32,10 @@ func (s *PullRequestsService) Get(owner, repo string) ([]PullRequest, error) {
 		return nil, fmt.Errorf("failed to fetch pullrequests: %w", err)
 	}
 
+	slog.Info("success fetch PullRequest", "count", len(*prs))
+
 	if resp.StatusCode != http.StatusOK {
+		slog.Error("failed fetch PullRequests", "statusCode", resp.StatusCode)
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
