@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -31,7 +32,10 @@ func (s *PullRequestsService) Get(ctx context.Context, owner, repo string) ([]Pu
 		return nil, fmt.Errorf("failed to fetch pullrequests: %w", err)
 	}
 
+	slog.Info("success fetch PullRequest", "count", len(*prs))
+
 	if resp.StatusCode != http.StatusOK {
+		slog.Error("failed fetch PullRequests", "statusCode", resp.StatusCode)
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
