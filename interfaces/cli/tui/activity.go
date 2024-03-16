@@ -24,28 +24,24 @@ var (
 
 type Model struct {
 	focusIndex int
-	inputs     []textinput.Model
+	inputs     [3]textinput.Model
 	cursorMode cursor.Mode
 	github     *Github
 }
 
 type Github struct {
-	Owner string
-	Repo  string
+	Owner    string
+	Repo     string
+	Username string
 }
 
 func New(g *Github) *Model {
-
-}
-
-func InitialModel() Model {
-	m := Model{
-		inputs: make([]textinput.Model, 3),
+	m := &Model{
+		github: g,
 	}
 
-	var t textinput.Model
-	for i := range m.inputs {
-		t = textinput.New()
+	for i := 0; i < 3; i++ {
+		t := textinput.New()
 		t.Cursor.Style = cursorStyle
 		t.CharLimit = 32
 
@@ -80,47 +76,52 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "tab", "shift+tab", "enter", "up", "down":
-			s := msg.String()
-
-			if s == "enter" && m.focusIndex == len(m.inputs) {
-				return m, tea.Quit
-			}
-
-			// Cycle indexes
-			if s == "up" || s == "shift+tab" {
-				m.focusIndex--
-			} else {
+			if msg.String() == "enter" && m.focusIndex < len(m.inputs) {
+				switch m.focusIndex {
+				case 0:
+					m.github.Owner = m.inputs[m.focusIndex].Value()
+				case 1:
+					m.github.Repo = m.inputs[m.focusIndex].Value()
+				case 2:
+					m.github.Username = m.inputs[m.focusIndex].Value()
+				}
 				m.focusIndex++
-			}
+				if m.focusIndex > len(m.inputs) {
+					m.focusIndex = 0
+				}
+			} else {
+				if msg.String() == "up" || msg.String() == "shift+tab" {
+					m.focusIndex--
+				} else {
+					m.focusIndex++
+				}
 
-			if m.focusIndex > len(m.inputs) {
-				m.focusIndex = 0
-			} else if m.focusIndex < 0 {
-				m.focusIndex = len(m.inputs)
+				if m.focusIndex > len(m.inputs) {
+					m.focusIndex = 0
+				} else if m.focusIndex < 0 {
+					m.focusIndex = len(m.inputs)
+				}
 			}
 
 			cmds := make([]tea.Cmd, len(m.inputs))
 			for i := 0; i <= len(m.inputs)-1; i++ {
 				if i == m.focusIndex {
-					// Set focused state
 					cmds[i] = m.inputs[i].Focus()
 					m.inputs[i].PromptStyle = focusedStyle
 					m.inputs[i].TextStyle = focusedStyle
-					continue
+				} else {
+					m.inputs[i].Blur()
+					m.inputs[i].PromptStyle = noStyle
+					m.inputs[i].TextStyle = noStyle
 				}
-				// Remove focused state
-				m.inputs[i].Blur()
-				m.inputs[i].PromptStyle = noStyle
-				m.inputs[i].TextStyle = noStyle
 			}
 
 			return m, tea.Batch(cmds...)
+
 		}
 	}
 
-	// Handle character input and blinking
 	cmd := m.updateInputs(msg)
-
 	return m, cmd
 }
 
