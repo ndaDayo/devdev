@@ -20,11 +20,16 @@ var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: "get activity",
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, err := tea.NewProgram(activity.InitialModel()).Run(); err != nil {
-			fmt.Printf("could not start program: %s\n", err)
+		p, err := tea.NewProgram(activity.InitialModel()).Run()
+		finalModel, ok := p.(Model)
+		if !ok {
+			fmt.Println("Program did not return the expected model type.")
 			os.Exit(1)
 		}
-
+		// ここで finalModel からニックネーム、Eメール、パスワードにアクセスできます。
+		fmt.Println("Nickname:", finalModel.Nickname)
+		fmt.Println("Email:", finalModel.Email)
+		fmt.Println("Password:", finalModel.Password)
 		var opts []func(*usecase.Input)
 		if githubUsername != "" && githubRepo != "" {
 			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{

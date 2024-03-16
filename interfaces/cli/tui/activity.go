@@ -22,14 +22,24 @@ var (
 	blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
 )
 
-type model struct {
+type Model struct {
 	focusIndex int
 	inputs     []textinput.Model
 	cursorMode cursor.Mode
+	github     *Github
 }
 
-func InitialModel() model {
-	m := model{
+type Github struct {
+	Owner string
+	Repo  string
+}
+
+func New(g *Github) *Model {
+
+}
+
+func InitialModel() Model {
+	m := Model{
 		inputs: make([]textinput.Model, 3),
 	}
 
@@ -41,13 +51,12 @@ func InitialModel() model {
 
 		switch i {
 		case 0:
-			t.Placeholder = "Owner"
+			t.Placeholder = "Repository owner"
 			t.Focus()
 			t.PromptStyle = focusedStyle
 			t.TextStyle = focusedStyle
 		case 1:
-			t.Placeholder = "RepositoryName"
-			t.CharLimit = 64
+			t.Placeholder = "Repository name"
 		case 2:
 			t.Placeholder = "Username"
 			t.EchoMode = textinput.EchoPassword
@@ -59,35 +68,20 @@ func InitialModel() model {
 	return m
 }
 
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":
 			return m, tea.Quit
 
-		// Change cursor mode
-		case "ctrl+r":
-			m.cursorMode++
-			if m.cursorMode > cursor.CursorHide {
-				m.cursorMode = cursor.CursorBlink
-			}
-			cmds := make([]tea.Cmd, len(m.inputs))
-			for i := range m.inputs {
-				cmds[i] = m.inputs[i].Cursor.SetMode(m.cursorMode)
-			}
-			return m, tea.Batch(cmds...)
-
-		// Set focus to next input
 		case "tab", "shift+tab", "enter", "up", "down":
 			s := msg.String()
 
-			// Did the user press enter while the submit button was focused?
-			// If so, exit.
 			if s == "enter" && m.focusIndex == len(m.inputs) {
 				return m, tea.Quit
 			}
@@ -130,11 +124,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *model) updateInputs(msg tea.Msg) tea.Cmd {
+func (m *Model) updateInputs(msg tea.Msg) tea.Cmd {
 	cmds := make([]tea.Cmd, len(m.inputs))
 
-	// Only text inputs with Focus() set will respond, so it's safe to simply
-	// update all of them here without any further logic.
 	for i := range m.inputs {
 		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
 	}
@@ -142,7 +134,7 @@ func (m *model) updateInputs(msg tea.Msg) tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
-func (m model) View() string {
+func (m Model) View() string {
 	var b strings.Builder
 
 	for i := range m.inputs {
