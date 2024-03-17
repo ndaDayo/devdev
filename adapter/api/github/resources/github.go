@@ -23,6 +23,7 @@ type Client struct {
 	httpClient httpClient
 
 	PullRequests *PullRequestsService
+	Commits      *CommitsService
 }
 
 type service struct {
@@ -49,6 +50,7 @@ func NewClient(options ...ClientOption) *Client {
 
 func (c *Client) initialize() {
 	c.PullRequests = &PullRequestsService{client: c}
+	c.Commits = &CommitsService{client: c}
 }
 
 func WithNoToken() ClientOption {
