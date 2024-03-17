@@ -47,7 +47,7 @@ func pullRequest(ctx context.Context, c *github.Client, criteria repository.Crit
 	return entities, nil
 }
 
-func commits(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.PullRequest, error) {
+func commits(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.Commit, error) {
 	p := github.CommitsParam{
 		Path: github.Path{
 			Owner: criteria.Owner,
@@ -58,10 +58,18 @@ func commits(ctx context.Context, c *github.Client, criteria repository.Criteria
 			Until: criteria.Until,
 		},
 	}
-	commits, err := c.Commits.Get(ctx, p)
-
+	cmts, err := c.Commits.Get(ctx, p)
 	if err != nil {
 		return nil, err
+	}
+
+	var entities []entity.Commit
+	for _, cmt := range *cmts {
+		commit := entity.Commit{
+			Author: cmt.Commit.Author.Name,
+		}
+
+		entities = append(entities, commit)
 	}
 
 	return entities, nil

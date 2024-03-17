@@ -4,10 +4,15 @@ import "time"
 
 type Code struct {
 	PullRequests []PullRequest
+	Commits      []Commit
 }
 
 type PullRequest struct {
 	leadTime LeadTime
+}
+
+type Commit struct {
+	Author string
 }
 
 func NewPullRequest(l LeadTime) PullRequest {
