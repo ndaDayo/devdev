@@ -66,6 +66,8 @@ func (u *ActivityUseCase) fetchCodeActivity(params interface{}) (entity.Code, er
 		Owner: cp.Owner,
 		Repo:  cp.Repo,
 		User:  cp.Username,
+		Since: cp.Since,
+		Until: cp.Until,
 	}
 	code, err := u.repository.GetCodeActivity(ctx, c)
 

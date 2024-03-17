@@ -3,6 +3,8 @@ package github
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"net/http"
 	"net/url"
 	"time"
 )
@@ -53,24 +55,31 @@ type user struct {
 	ID    int    `json:"id"`
 }
 
-func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
+func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, error) {
 	path := fmt.Sprintf("/repos/%v/%v/commits", p.Path.Owner, p.Path.Repo)
 	query := url.Values{}
 
-	query.Add("since", "2023-08-31T00:00:00Z")
-	query.Add("until", "2023-09-04T23:59:59Z")
+	query.Add("since", p.Query.Since)
+	query.Add("until", p.Query.Until)
 
 	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
 	req, err := s.client.NewRequest("GET", endpoint)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	commits := new(Commits)
 	resp, err := s.client.Do(ctx, req, commits)
 	if err != nil {
-		return nil, resp, err
+		return nil, err
 	}
 
-	return commits, resp, nil
+	slog.Info("success Commits", "count", len(*commits))
+
+	if resp.StatusCode != http.StatusOK {
+		slog.Error("failed fetch Commits", "statusCode", resp.StatusCode)
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	return commits, nil
 }
