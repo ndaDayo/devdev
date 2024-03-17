@@ -2,6 +2,8 @@ package github
 
 import (
 	"context"
+	"fmt"
+	"sync"
 
 	github "github.com/ndaDayo/devdev/adapter/api/github/resources"
 	entity "github.com/ndaDayo/devdev/domain/entity/activity"
@@ -16,19 +18,43 @@ func NewCodeActivityFetcher() *CodeActivityFetcher {
 
 func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repository.Criteria) (entity.Code, error) {
 	client := github.NewClient(github.WithToken())
-	pr, err := pullRequest(ctx, client, criteria)
-	if err != nil {
-		return entity.Code{}, err
-	}
 
-	commits, err := commits(ctx, client, criteria)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var (
+		pr        []entity.PullRequest
+		cmts      []entity.Commit
+		prErr     error
+		commitErr error
+	)
+
+	go func() {
+		defer wg.Done()
+		pr, prErr = pullRequest(ctx, client, criteria)
+	}()
+
+	go func() {
+		defer wg.Done()
+		cmts, commitErr = commits(ctx, client, criteria)
+	}()
+
+	wg.Wait()
+
+	if prErr != nil {
+		return entity.Code{}, fmt.Errorf("failed to fetch PullRequests: %w", prErr)
+	}
+	if commitErr != nil {
+		return entity.Code{}, fmt.Errorf("failed to fetch commits: %w", commitErr)
+	}
 
 	code := entity.Code{
 		PullRequests: pr,
-		Commits:      commits,
+		Commits:      cmts,
 	}
 
 	return code, nil
+
 }
 
 func pullRequest(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.PullRequest, error) {

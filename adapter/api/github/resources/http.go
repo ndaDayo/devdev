@@ -17,7 +17,6 @@ type Response struct {
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-
 		return nil, err
 	}
 	defer resp.Body.Close()
