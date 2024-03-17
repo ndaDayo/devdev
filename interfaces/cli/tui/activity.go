@@ -62,9 +62,11 @@ func New(g *Github) *Model {
 		case 2:
 			t.Placeholder = "Username"
 		case 3:
-			t.Placeholder = "YYYY MM DD"
+			t.Placeholder = "YYYYMMDD"
+			t.CharLimit = 8
 		case 4:
-			t.Placeholder = "YYYY MM DD"
+			t.Placeholder = "YYYYMMDD"
+			t.CharLimit = 8
 		}
 
 		m.inputs[i] = t
@@ -86,7 +88,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "tab", "shift+tab", "enter", "up", "down":
 			if msg.String() == "enter" && m.focusIndex == len(m.inputs) {
-				fmt.Println("Submit!!!!")
 				return m, tea.Quit
 			}
 			if msg.String() == "enter" && m.focusIndex < len(m.inputs) {
@@ -158,15 +159,15 @@ func (m Model) View() string {
 	for i := range m.inputs {
 		switch i {
 		case 0:
-			b.WriteString("Repository owner:\n")
+			b.WriteString("Repository Owner:\n")
 		case 1:
-			b.WriteString("Repository name:\n")
+			b.WriteString("Repository Name:\n")
 		case 2:
 			b.WriteString("Username:\n")
 		case 3:
-			b.WriteString("Since (YYYY MM DD):\n")
+			b.WriteString("Since:\n")
 		case 4:
-			b.WriteString("Until (YYYY MM DD):\n")
+			b.WriteString("Until:\n")
 		}
 
 		b.WriteString(m.inputs[i].View())
