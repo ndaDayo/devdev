@@ -38,16 +38,14 @@ var activityCmd = &cobra.Command{
 		}
 
 		u := di.InitializeActivityUseCase()
-		acs, err := u.Run(opts...)
+		_, err = u.Run(opts...)
 		if err != nil {
 			fmt.Printf("Error in activity cmd: %v\n", err)
 			return
 		}
-		fmt.Println("type %T", acs) // Debug出力
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(activityCmd)
-
 }

@@ -55,7 +55,6 @@ func New(g *Github) *Model {
 			t.Placeholder = "Repository name"
 		case 2:
 			t.Placeholder = "Username"
-			t.EchoMode = textinput.EchoPassword
 		}
 
 		m.inputs[i] = t
