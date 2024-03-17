@@ -1,4 +1,4 @@
-package activity
+package tui
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ type Model struct {
 	focusIndex int
 	inputs     [3]textinput.Model
 	cursorMode cursor.Mode
-	github     *Github
+	Github     *Github
 }
 
 type Github struct {
@@ -37,7 +37,7 @@ type Github struct {
 
 func New(g *Github) *Model {
 	m := &Model{
-		github: g,
+		Github: g,
 	}
 
 	for i := 0; i < 3; i++ {
@@ -76,14 +76,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "tab", "shift+tab", "enter", "up", "down":
+			if msg.String() == "enter" && m.focusIndex == len(m.inputs) {
+				fmt.Println("Submit!!!!")
+				return m, tea.Quit
+			}
 			if msg.String() == "enter" && m.focusIndex < len(m.inputs) {
 				switch m.focusIndex {
 				case 0:
-					m.github.Owner = m.inputs[m.focusIndex].Value()
+					m.Github.Owner = m.inputs[m.focusIndex].Value()
 				case 1:
-					m.github.Repo = m.inputs[m.focusIndex].Value()
+					m.Github.Repo = m.inputs[m.focusIndex].Value()
 				case 2:
-					m.github.Username = m.inputs[m.focusIndex].Value()
+					m.Github.Username = m.inputs[m.focusIndex].Value()
 				}
 				m.focusIndex++
 				if m.focusIndex > len(m.inputs) {
