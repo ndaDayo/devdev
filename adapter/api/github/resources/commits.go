@@ -57,8 +57,8 @@ func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Re
 	path := fmt.Sprintf("/repos/%v/%v/commits", p.Path.Owner, p.Path.Repo)
 	query := url.Values{}
 
-	query.Add("since", "2023-08-31T00:00:00Z")
-	query.Add("until", "2023-09-04T23:59:59Z")
+	query.Add("since", p.Query.Since)
+	query.Add("until", p.Query.Until)
 
 	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
 	req, err := s.client.NewRequest("GET", endpoint)
