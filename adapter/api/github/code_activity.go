@@ -16,7 +16,7 @@ func NewCodeActivityFetcher() *CodeActivityFetcher {
 
 func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repository.Criteria) (entity.Code, error) {
 	client := github.NewClient(github.WithToken())
-	pr, err := pullRequest(ctx, client, criteria.Owner, criteria.Repo)
+	pr, err := pullRequest(ctx, client, criteria)
 	if err != nil {
 		return entity.Code{}, err
 	}
@@ -28,8 +28,8 @@ func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repo
 	return code, nil
 }
 
-func pullRequest(ctx context.Context, c *github.Client, owner, repo string) ([]entity.PullRequest, error) {
-	prs, err := c.PullRequests.Get(ctx, owner, repo)
+func pullRequest(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.PullRequest, error) {
+	prs, err := c.PullRequests.Get(ctx, criteria)
 	if err != nil {
 		return nil, err
 	}
