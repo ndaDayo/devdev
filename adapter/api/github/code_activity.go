@@ -21,6 +21,8 @@ func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repo
 		return entity.Code{}, err
 	}
 
+	commits, err := commits(ctx, client, criteria)
+
 	code := entity.Code{
 		PullRequests: pr,
 	}
@@ -40,6 +42,26 @@ func pullRequest(ctx context.Context, c *github.Client, criteria repository.Crit
 		e := entity.NewPullRequest(lt)
 
 		entities = append(entities, e)
+	}
+
+	return entities, nil
+}
+
+func commits(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.PullRequest, error) {
+	p := github.CommitsParam{
+		Path: github.Path{
+			Owner: criteria.Owner,
+			Repo:  criteria.Repo,
+		},
+		Query: github.Query{
+			Since: criteria.Since,
+			Until: criteria.Until,
+		},
+	}
+	commits, err := c.Commits.Get(ctx, p)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return entities, nil

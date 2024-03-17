@@ -3,6 +3,8 @@ package github
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"net/http"
 	"net/url"
 	"time"
 )
@@ -53,7 +55,7 @@ type user struct {
 	ID    int    `json:"id"`
 }
 
-func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Response, error) {
+func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, error) {
 	path := fmt.Sprintf("/repos/%v/%v/commits", p.Path.Owner, p.Path.Repo)
 	query := url.Values{}
 
@@ -63,14 +65,19 @@ func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, *Re
 	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
 	req, err := s.client.NewRequest("GET", endpoint)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	commits := new(Commits)
 	resp, err := s.client.Do(ctx, req, commits)
 	if err != nil {
-		return nil, resp, err
+		return nil, err
 	}
 
-	return commits, resp, nil
+	if resp.StatusCode != http.StatusOK {
+		slog.Error("failed fetch Commits", "statusCode", resp.StatusCode)
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	return commits, nil
 }
