@@ -43,7 +43,6 @@ func (s *PullRequestsService) Get(ctx context.Context, criteria repository.Crite
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		slog.Error("failed fetch PullRequests", "statusCode", resp.StatusCode)
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
