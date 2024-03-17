@@ -27,13 +27,13 @@ var activityCmd = &cobra.Command{
 			return
 		}
 
-		githubUsername := tuiModel.Github.Username
-		githubRepo := tuiModel.Github.Repo
+		owner := tuiModel.Github.Owner
+		repo := tuiModel.Github.Repo
 		var opts []func(*usecase.Input)
-		if githubUsername != "" && githubRepo != "" {
+		if owner != "" && repo != "" {
 			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{
-				Owner: githubUsername,
-				Repo:  githubRepo,
+				Owner: owner,
+				Repo:  repo,
 			}))
 		}
 
