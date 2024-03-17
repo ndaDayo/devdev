@@ -37,8 +37,8 @@ type Github struct {
 }
 
 type Period struct {
-	Start string
-	End   string
+	Since string
+	Until string
 }
 
 func New(g *Github) *Model {
@@ -98,9 +98,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case 2:
 					m.Github.Username = m.inputs[m.focusIndex].Value()
 				case 3:
-					m.Github.Period.Start = m.inputs[m.focusIndex].Value()
+					m.Github.Period.Since = m.inputs[m.focusIndex].Value()
 				case 4:
-					m.Github.Period.End = m.inputs[m.focusIndex].Value()
+					m.Github.Period.Until = m.inputs[m.focusIndex].Value()
 				}
 				m.focusIndex++
 				if m.focusIndex > len(m.inputs) {
@@ -164,9 +164,9 @@ func (m Model) View() string {
 		case 2:
 			b.WriteString("Username:\n")
 		case 3:
-			b.WriteString("Start (YYYY MM DD):\n")
+			b.WriteString("Since (YYYY MM DD):\n")
 		case 4:
-			b.WriteString("End (YYYY MM DD):\n")
+			b.WriteString("Until (YYYY MM DD):\n")
 		}
 
 		b.WriteString(m.inputs[i].View())

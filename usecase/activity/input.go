@@ -23,6 +23,8 @@ type CodeInput struct {
 	Owner    string
 	Repo     string
 	Username string
+	Since    string
+	Until    string
 }
 
 func WithGithub(prm *CodeInput) func(*Input) {
@@ -43,7 +45,6 @@ func WithSlack(prm *slackInput) func(*Input) {
 
 func NewActivityOptionsInput(opts ...func(*Input)) *Input {
 	options := &Input{}
-
 	for _, opt := range opts {
 		opt(options)
 	}

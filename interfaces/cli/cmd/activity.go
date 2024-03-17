@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/ndaDayo/devdev/di"
@@ -29,16 +30,33 @@ var activityCmd = &cobra.Command{
 
 		owner := tuiModel.Github.Owner
 		repo := tuiModel.Github.Repo
+		sinceStr := tuiModel.Github.Period.Since
+
+		const layout = "20060102"
+		since, err := time.Parse(layout, sinceStr)
+		if err != nil {
+			fmt.Println("Since date parsing error:", err)
+			return
+		}
+		untilStr := tuiModel.Github.Period.Until
+		until, err := time.Parse(layout, untilStr)
+		if err != nil {
+			fmt.Println("Until date parsing error:", err)
+			return
+		}
+
 		var opts []func(*usecase.Input)
 		if owner != "" && repo != "" {
 			opts = append(opts, usecase.WithGithub(&usecase.CodeInput{
 				Owner: owner,
 				Repo:  repo,
+				Since: since.Format(time.RFC3339),
+				Until: until.Format(time.RFC3339),
 			}))
 		}
 
-		u := di.InitializeActivityUseCase()
-		_, err = u.Run(opts...)
+		usecase := di.InitializeActivityUseCase()
+		_, err = usecase.Run(opts...)
 		if err != nil {
 			fmt.Printf("Error in activity cmd: %v\n", err)
 			return
