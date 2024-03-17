@@ -62,7 +62,12 @@ func (u *ActivityUseCase) fetchCodeActivity(params interface{}) (entity.Code, er
 	}
 
 	ctx := context.Background()
-	code, err := u.repository.GetCodeActivity(ctx, cp.Owner, cp.Repo, cp.Username)
+	c := repository.Criteria{
+		Owner: cp.Owner,
+		Repo:  cp.Repo,
+		User:  cp.Username,
+	}
+	code, err := u.repository.GetCodeActivity(ctx, c)
 
 	if err != nil {
 		return entity.Code{}, err

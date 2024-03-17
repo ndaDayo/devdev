@@ -5,6 +5,7 @@ import (
 
 	github "github.com/ndaDayo/devdev/adapter/api/github/resources"
 	entity "github.com/ndaDayo/devdev/domain/entity/activity"
+	repository "github.com/ndaDayo/devdev/domain/repository/activity"
 )
 
 type CodeActivityFetcher struct{}
@@ -13,9 +14,9 @@ func NewCodeActivityFetcher() *CodeActivityFetcher {
 	return &CodeActivityFetcher{}
 }
 
-func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, owner, repo, user string) (entity.Code, error) {
+func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repository.Criteria) (entity.Code, error) {
 	client := github.NewClient(github.WithToken())
-	pr, err := pullRequest(ctx, client, owner, repo)
+	pr, err := pullRequest(ctx, client, criteria.Owner, criteria.Repo)
 	if err != nil {
 		return entity.Code{}, err
 	}
