@@ -45,7 +45,7 @@ func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repo
 		return entity.Code{}, fmt.Errorf("failed to fetch PullRequests: %w", prErr)
 	}
 	if commitErr != nil {
-		return entity.Code{}, fmt.Errorf("failed to commitErr: %w", commitErr)
+		return entity.Code{}, fmt.Errorf("failed to fetch commits: %w", commitErr)
 	}
 
 	code := entity.Code{
