@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"time"
+
+	repository "github.com/ndaDayo/devdev/domain/repository/activity"
 )
 
 type PullRequests []PullRequest
@@ -19,9 +22,16 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(ctx context.Context, owner, repo string) ([]PullRequest, error) {
-	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", owner, repo)
-	req, err := s.client.NewRequest("GET", path)
+func (s *PullRequestsService) Get(ctx context.Context, criteria repository.Criteria) ([]PullRequest, error) {
+	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", criteria.Owner, criteria.Repo)
+
+	query := url.Values{}
+	query.Add("since", criteria.Since)
+	query.Add("until", criteria.Until)
+
+	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
+	req, err := s.client.NewRequest("GET", endpoint)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct NewRequest: %w", err)
 	}

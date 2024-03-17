@@ -24,7 +24,7 @@ var (
 
 type Model struct {
 	focusIndex int
-	inputs     [3]textinput.Model
+	inputs     [5]textinput.Model
 	cursorMode cursor.Mode
 	Github     *Github
 }
@@ -33,6 +33,12 @@ type Github struct {
 	Owner    string
 	Repo     string
 	Username string
+	Period   Period
+}
+
+type Period struct {
+	Since string
+	Until string
 }
 
 func New(g *Github) *Model {
@@ -40,7 +46,7 @@ func New(g *Github) *Model {
 		Github: g,
 	}
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 5; i++ {
 		t := textinput.New()
 		t.Cursor.Style = cursorStyle
 		t.CharLimit = 32
@@ -55,6 +61,12 @@ func New(g *Github) *Model {
 			t.Placeholder = "Repository name"
 		case 2:
 			t.Placeholder = "Username"
+		case 3:
+			t.Placeholder = "YYYYMMDD"
+			t.CharLimit = 8
+		case 4:
+			t.Placeholder = "YYYYMMDD"
+			t.CharLimit = 8
 		}
 
 		m.inputs[i] = t
@@ -76,7 +88,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "tab", "shift+tab", "enter", "up", "down":
 			if msg.String() == "enter" && m.focusIndex == len(m.inputs) {
-				fmt.Println("Submit!!!!")
 				return m, tea.Quit
 			}
 			if msg.String() == "enter" && m.focusIndex < len(m.inputs) {
@@ -87,6 +98,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.Github.Repo = m.inputs[m.focusIndex].Value()
 				case 2:
 					m.Github.Username = m.inputs[m.focusIndex].Value()
+				case 3:
+					m.Github.Period.Since = m.inputs[m.focusIndex].Value()
+				case 4:
+					m.Github.Period.Until = m.inputs[m.focusIndex].Value()
 				}
 				m.focusIndex++
 				if m.focusIndex > len(m.inputs) {
@@ -142,6 +157,19 @@ func (m Model) View() string {
 	var b strings.Builder
 
 	for i := range m.inputs {
+		switch i {
+		case 0:
+			b.WriteString("Repository Owner:\n")
+		case 1:
+			b.WriteString("Repository Name:\n")
+		case 2:
+			b.WriteString("Username:\n")
+		case 3:
+			b.WriteString("Since:\n")
+		case 4:
+			b.WriteString("Until:\n")
+		}
+
 		b.WriteString(m.inputs[i].View())
 		if i < len(m.inputs)-1 {
 			b.WriteRune('\n')
@@ -153,10 +181,6 @@ func (m Model) View() string {
 		button = &focusedButton
 	}
 	fmt.Fprintf(&b, "\n\n%s\n\n", *button)
-
-	b.WriteString(helpStyle.Render("cursor mode is "))
-	b.WriteString(cursorModeHelpStyle.Render(m.cursorMode.String()))
-	b.WriteString(helpStyle.Render(" (ctrl+r to change style)"))
 
 	return b.String()
 }
