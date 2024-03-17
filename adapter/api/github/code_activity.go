@@ -25,6 +25,7 @@ func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repo
 
 	code := entity.Code{
 		PullRequests: pr,
+		Commits:      commits,
 	}
 
 	return code, nil

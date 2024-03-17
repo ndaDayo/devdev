@@ -74,6 +74,8 @@ func (s *CommitsService) Get(ctx context.Context, p CommitsParam) (*Commits, err
 		return nil, err
 	}
 
+	slog.Info("success Commits", "count", len(*commits))
+
 	if resp.StatusCode != http.StatusOK {
 		slog.Error("failed fetch Commits", "statusCode", resp.StatusCode)
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)

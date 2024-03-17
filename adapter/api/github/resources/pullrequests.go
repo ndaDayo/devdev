@@ -23,11 +23,11 @@ type PullRequest struct {
 type PullRequestsService service
 
 func (s *PullRequestsService) Get(ctx context.Context, criteria repository.Criteria) ([]PullRequest, error) {
-	path := fmt.Sprintf("/repos/%v/%v/pulls?state=all", criteria.Owner, criteria.Repo)
+	path := fmt.Sprintf("/repos/%v/%v/pulls", criteria.Owner, criteria.Repo)
 
 	query := url.Values{}
-	query.Add("since", criteria.Since)
-	query.Add("until", criteria.Until)
+	query.Add("state", "all")
+	query.Add("per_page", "100")
 
 	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
 	req, err := s.client.NewRequest("GET", endpoint)
@@ -42,8 +42,6 @@ func (s *PullRequestsService) Get(ctx context.Context, criteria repository.Crite
 		return nil, fmt.Errorf("failed to fetch pullrequests: %w", err)
 	}
 
-	slog.Info("success fetch PullRequest", "count", len(*prs))
-
 	if resp.StatusCode != http.StatusOK {
 		slog.Error("failed fetch PullRequests", "statusCode", resp.StatusCode)
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
@@ -53,6 +51,8 @@ func (s *PullRequestsService) Get(ctx context.Context, criteria repository.Crite
 	for _, pr := range *prs {
 		p = append(p, pr)
 	}
+
+	slog.Info("success fetch PullRequest", "count", len(p))
 
 	return p, nil
 }
