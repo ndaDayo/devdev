@@ -1,15 +1,9 @@
 package usecase
 
-import "time"
-
-type Output struct {
-	CodeOutput CodeOutput
+type ActivityOutput struct {
+	PullRequests []PullRequest
 }
 
-type CodeOutput struct {
-	CodeActivity CodeActivity
-}
-
-type CodeActivity struct {
-	LeadTime time.Duration
+type PullRequest struct {
+	LeadTime string
 }

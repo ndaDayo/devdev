@@ -4,6 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -56,11 +57,14 @@ var activityCmd = &cobra.Command{
 		}
 
 		usecase := di.InitializeActivityUseCase()
-		_, err = usecase.Run(opts...)
+		result, err := usecase.Run(opts...)
 		if err != nil {
 			fmt.Printf("Error in activity cmd: %v\n", err)
 			return
 		}
+
+		m, _ := json.MarshalIndent(result, "", "    ")
+		fmt.Println(string(m))
 	},
 }
 
