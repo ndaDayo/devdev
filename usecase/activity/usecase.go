@@ -18,10 +18,6 @@ type (
 	ActivityPresenter interface {
 		Output(entity.Activity) ActivityOutput
 	}
-
-	ActivityOutput struct {
-		OutPut Output
-	}
 )
 
 func NewActivityUseCase(
@@ -52,7 +48,7 @@ func (u *ActivityUseCase) Run(opts ...func(*Input)) (ActivityOutput, error) {
 		return u.presenter.Output(activity), nil
 	}
 
-	return u.presenter.Output(activity), nil
+	return ActivityOutput{}, nil
 }
 
 func (u *ActivityUseCase) fetchCodeActivity(params interface{}) (entity.Code, error) {

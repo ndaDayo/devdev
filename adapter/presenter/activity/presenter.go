@@ -11,6 +11,19 @@ func NewActivityPresenter() usecase.ActivityPresenter {
 	return activityPresenter{}
 }
 
-func (p activityPresenter) Output(entity.Activity) usecase.ActivityOutput {
-	return usecase.ActivityOutput{}
+func (ac activityPresenter) Output(e entity.Activity) usecase.ActivityOutput {
+	pulls := e.CodeActivity.PullRequests
+	var p = make([]usecase.PullRequest, 0)
+
+	for _, pull := range pulls {
+		p = append(p, usecase.PullRequest{
+			LeadTime: pull.GetLeadTime(),
+		})
+	}
+
+	o := usecase.ActivityOutput{
+		PullRequests: p,
+	}
+
+	return o
 }
