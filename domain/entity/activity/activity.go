@@ -16,7 +16,8 @@ type PullRequest struct {
 }
 
 type Commit struct {
-	Author string
+	Author   string
+	TotalLen int
 }
 
 func NewPullRequest(l leadTime) PullRequest {
