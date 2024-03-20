@@ -28,15 +28,7 @@ type PullsParam struct {
 }
 
 func (s *PullRequestsService) Get(ctx context.Context, param PullsParam) ([]PullRequest, error) {
-	path := fmt.Sprintf("/repos/%v/%v/pulls", param.Owner, param.Repo)
-
-	query := url.Values{}
-	query.Add("state", param.State)
-	query.Add("per_page", param.PerPage)
-
-	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
-	req, err := s.client.NewRequest("GET", endpoint)
-
+	req, err := s.client.NewRequest("GET", payload(param))
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct NewRequest: %w", err)
 	}
@@ -59,4 +51,16 @@ func (s *PullRequestsService) Get(ctx context.Context, param PullsParam) ([]Pull
 	slog.Info("success fetch PullRequest", "count", len(p))
 
 	return p, nil
+}
+
+func payload(p PullsParam) string {
+	path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
+
+	query := url.Values{}
+
+	query.Add("state", p.State)
+	query.Add("per_page", p.PerPage)
+
+	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
+	return endpoint
 }
