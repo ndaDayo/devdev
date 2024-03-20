@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"time"
 )
 
@@ -25,18 +24,12 @@ type PullsParam struct {
 	Repo    string
 	State   string
 	PerPage string
+	Since   string
+	Until   string
 }
 
 func (s *PullRequestsService) Get(ctx context.Context, param PullsParam) ([]PullRequest, error) {
-	path := fmt.Sprintf("/repos/%v/%v/pulls", param.Owner, param.Repo)
-
-	query := url.Values{}
-	query.Add("state", param.State)
-	query.Add("per_page", param.PerPage)
-
-	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
-	req, err := s.client.NewRequest("GET", endpoint)
-
+	req, err := s.client.NewRequest("GET", s.client.Payload(param))
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct NewRequest: %w", err)
 	}
@@ -51,12 +44,34 @@ func (s *PullRequestsService) Get(ctx context.Context, param PullsParam) ([]Pull
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	var p []PullRequest
-	for _, pr := range *prs {
-		p = append(p, pr)
+	p, err := filter(*prs, param.Since, param.Until)
+	if err != nil {
+		return nil, fmt.Errorf("failed to filter pullrequests: %w", err)
 	}
 
 	slog.Info("success fetch PullRequest", "count", len(p))
 
 	return p, nil
+}
+
+func filter(prs PullRequests, since, until string) ([]PullRequest, error) {
+	var filteredPRs []PullRequest
+
+	sinceTime, err := time.Parse(time.RFC3339, since)
+	if err != nil {
+		return nil, fmt.Errorf("invalid 'since' format: %w", err)
+	}
+
+	untilTime, err := time.Parse(time.RFC3339, until)
+	if err != nil {
+		return nil, fmt.Errorf("invalid 'until' format: %w", err)
+	}
+
+	for _, pr := range prs {
+		if pr.CreatedAt.After(sinceTime) && pr.CreatedAt.Before(untilTime) {
+			filteredPRs = append(filteredPRs, pr)
+		}
+	}
+
+	return filteredPRs, nil
 }

@@ -1,6 +1,7 @@
 package github
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -93,4 +94,20 @@ func (c *Client) NewRequest(method, path string) (*http.Request, error) {
 	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	return req, nil
+}
+
+func (c *Client) Payload(param interface{}) string {
+	switch p := param.(type) {
+	case PullsParam:
+		path := fmt.Sprintf("/repos/%v/%v/pulls", p.Owner, p.Repo)
+
+		query := url.Values{}
+		query.Add("state", p.State)
+		query.Add("per_page", p.PerPage)
+
+		return fmt.Sprintf("%s?%s", path, query.Encode())
+
+	default:
+		return ""
+	}
 }
