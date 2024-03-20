@@ -63,6 +63,8 @@ func pullRequest(ctx context.Context, c *github.Client, criteria repository.Crit
 		Repo:    criteria.Repo,
 		State:   "all",
 		PerPage: "100",
+		Since:   criteria.Since,
+		Until:   criteria.Until,
 	}
 	prs, err := c.PullRequests.Get(ctx, param)
 	if err != nil {

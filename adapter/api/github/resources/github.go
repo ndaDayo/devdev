@@ -108,7 +108,6 @@ func (c *Client) Payload(param interface{}) string {
 		return fmt.Sprintf("%s?%s", path, query.Encode())
 
 	default:
-
+		return ""
 	}
-
 }
