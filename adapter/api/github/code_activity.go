@@ -58,7 +58,13 @@ func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repo
 }
 
 func pullRequest(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.PullRequest, error) {
-	prs, err := c.PullRequests.Get(ctx, criteria)
+	param := github.PullsParam{
+		Owner:   criteria.Owner,
+		Repo:    criteria.Repo,
+		State:   "all",
+		PerPage: "100",
+	}
+	prs, err := c.PullRequests.Get(ctx, param)
 	if err != nil {
 		return nil, err
 	}
