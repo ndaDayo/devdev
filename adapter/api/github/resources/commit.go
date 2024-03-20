@@ -3,6 +3,8 @@ package github
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"net/http"
 	"time"
 )
 
@@ -99,18 +101,25 @@ type CommitParam struct {
 	Ref   string
 }
 
-func (s *CommitService) Get(ctx context.Context, p CommitParam) (*Commit, *Response, error) {
+func (s *CommitService) Get(ctx context.Context, p CommitParam) (*Commit, error) {
 	path := fmt.Sprintf("/repos/%v/%v/commits/%v", p.Owner, p.Repo, p.Ref)
 	req, err := s.client.NewRequest("GET", path)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	commit := new(Commit)
 	resp, err := s.client.Do(ctx, req, commit)
 	if err != nil {
-		return nil, resp, err
+		return nil, err
 	}
 
-	return commit, resp, nil
+	slog.Info("success fetch Commit")
+
+	if resp.StatusCode != http.StatusOK {
+		slog.Error("failed fetch Commit", "statusCode", resp.StatusCode)
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	return commit, nil
 }

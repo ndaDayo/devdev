@@ -92,8 +92,22 @@ func commits(ctx context.Context, c *github.Client, criteria repository.Criteria
 
 	var entities []entity.Commit
 	for _, cmt := range *cmts {
+
+		p := github.CommitParam{
+			Owner: criteria.Owner,
+			Repo:  criteria.Repo,
+			Ref:   cmt.SHA,
+		}
+
+		c, err := c.Commit.Get(ctx, p)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch commit: %w", err)
+		}
+
 		commit := entity.Commit{
-			Author: cmt.Commit.Author.Name,
+			Author:   c.Commit.Author.Name,
+			TotalLen: c.Stats.Total,
 		}
 
 		entities = append(entities, commit)
