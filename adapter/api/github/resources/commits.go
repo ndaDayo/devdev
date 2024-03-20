@@ -32,9 +32,9 @@ type Query struct {
 	Page      int
 }
 
-type Commits []commit
+type Commits []CommitDetail
 
-type commit struct {
+type CommitDetail struct {
 	SHA    string    `json:"sha"`
 	Commit gitCommit `json:"commit"`
 	Author user      `json:"author"`
