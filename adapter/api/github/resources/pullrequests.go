@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-
-	repository "github.com/ndaDayo/devdev/domain/repository/activity"
 )
 
 type PullRequests []PullRequest
@@ -22,12 +20,19 @@ type PullRequest struct {
 
 type PullRequestsService service
 
-func (s *PullRequestsService) Get(ctx context.Context, criteria repository.Criteria) ([]PullRequest, error) {
-	path := fmt.Sprintf("/repos/%v/%v/pulls", criteria.Owner, criteria.Repo)
+type PullsParam struct {
+	Owner   string
+	Repo    string
+	State   string
+	PerPage string
+}
+
+func (s *PullRequestsService) Get(ctx context.Context, param PullsParam) ([]PullRequest, error) {
+	path := fmt.Sprintf("/repos/%v/%v/pulls", param.Owner, param.Repo)
 
 	query := url.Values{}
-	query.Add("state", "all")
-	query.Add("per_page", "100")
+	query.Add("state", param.State)
+	query.Add("per_page", param.PerPage)
 
 	endpoint := fmt.Sprintf("%s?%s", path, query.Encode())
 	req, err := s.client.NewRequest("GET", endpoint)

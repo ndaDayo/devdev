@@ -58,7 +58,13 @@ func (c *CodeActivityFetcher) GetCodeActivity(ctx context.Context, criteria repo
 }
 
 func pullRequest(ctx context.Context, c *github.Client, criteria repository.Criteria) ([]entity.PullRequest, error) {
-	prs, err := c.PullRequests.Get(ctx, criteria)
+	param := github.PullsParam{
+		Owner:   criteria.Owner,
+		Repo:    criteria.Repo,
+		State:   "all",
+		PerPage: "100",
+	}
+	prs, err := c.PullRequests.Get(ctx, param)
 	if err != nil {
 		return nil, err
 	}
@@ -90,27 +96,36 @@ func commits(ctx context.Context, c *github.Client, criteria repository.Criteria
 		return nil, err
 	}
 
-	var entities []entity.Commit
-	for _, cmt := range *cmts {
+	var wg sync.WaitGroup
+	entities := make([]entity.Commit, len(*cmts))
+	errs := make(chan error, 1)
+	for i, cmt := range *cmts {
+		wg.Add(1)
+		go func(i int, cmt github.CommitDetail) {
+			defer wg.Done()
+			p := github.CommitParam{
+				Owner: criteria.Owner,
+				Repo:  criteria.Repo,
+				Ref:   cmt.SHA,
+			}
 
-		p := github.CommitParam{
-			Owner: criteria.Owner,
-			Repo:  criteria.Repo,
-			Ref:   cmt.SHA,
-		}
+			c, err := c.Commit.Get(ctx, p)
 
-		c, err := c.Commit.Get(ctx, p)
+			if err != nil {
+				errs <- fmt.Errorf("failed to fetch commit: %w", err)
+			}
 
-		if err != nil {
-			return nil, fmt.Errorf("failed to fetch commit: %w", err)
-		}
-
-		commit := entity.Commit{
-			Author:   c.Commit.Author.Name,
-			TotalLen: c.Stats.Total,
-		}
-
-		entities = append(entities, commit)
+			entities[i] = entity.Commit{
+				Author:   c.Commit.Author.Name,
+				TotalLen: c.Stats.Total,
+			}
+		}(i, cmt)
+	}
+	wg.Wait()
+	select {
+	case err := <-errs:
+		return nil, err
+	default:
 	}
 
 	return entities, nil
